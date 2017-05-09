@@ -10,7 +10,7 @@
 * Included methods `register` and `unregister`.
 * Improved method `postAll`.
 
-See full changelog [here](https://github.com/israelss/simple-web-worker/changelog.md).
+See full changelog [here](https://github.com/israelss/simple-web-worker/blob/master/changelog.md).
 
 ## Why
 
