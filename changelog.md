@@ -1,5 +1,10 @@
 # Changelog
 
+## **1.1.0**
+
+* Providing local variables as arguments to functions is now supported.
+* Dist code bundled, transpiled and minified.
+
 ## **1.0.0**
 
 * First stable release.
