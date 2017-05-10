@@ -120,17 +120,17 @@ worker.postMessage('func4', ['Overwrited argument'])
   .catch(console.error) // logs any possible error
 ```
 
-### <worker\>.postAll(_[message1, message2, ... || { message: message1, args: [args1] }, ... || [args1], [args2], ...]?_)
+### <worker\>.postAll(_[message1,... || {message: message1, args: [args1]},... || [args1],...]?_)
 
 > Where:
 >* **<worker\>** is a worker created with `SWorker.create([actions])`
 >* The argument is an optional array which accepts one of the following:
->    * _message1, message2, ..._ - strings containing one or more of the messages in _[actions]_
->   * _{ message: message1, args: [args1] }, ..._ - objects containing two fields, `message` (a message from _actions_) and `args` (the arguments to be used by the correspondent function)
->    * _[args1], [args2], ..._ - arrays of arguments to be used by the registered actions.
+>    * _message1,..._ - strings containing one or more of the messages in _[actions]_
+>   * _{message: message1, args: [args1]},..._ - objects containing two fields, `message` (a message from _actions_) and `args` (the arguments to be used by the correspondent function)
+>    * _[args1],..._ - arrays of arguments to be used by the registered actions.
 
->If _[messages]_ is `undefined` or no argument is given, **<worker\>** will run all registered actions without arguments.
-<br>If _[{ message: message1, args: [args1] },...]_ or _[[args1], [args2], ...]_ is used, you should use `null` as _[args]_ for the functions that does not expect arguments.
+>If _[message1,...]_ is `undefined` or no argument is given, **<worker\>** will run all registered actions without arguments.
+<br>If _[{message: message1, args: [args1]},...]_ or _[[args1],...]_ is used, you should use `null` as _[args]_ for the functions that does not expect arguments.
 <br>This method works like Promise.all(), but in another thread.
 
 E.g.:
