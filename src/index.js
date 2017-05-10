@@ -8,6 +8,8 @@ if (window.Worker) {
     create: _create,
     run: _run
   }
+} else {
+  console.warn('Your browser does not support Workers.')
 }
 
 export default WorkerWrapper
