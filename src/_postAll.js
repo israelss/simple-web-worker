@@ -9,6 +9,10 @@ const __errorMsgWrongLenght = actualLength => expectedLength =>
   `\nThis worker has ${expectedLength} actions registered.` +
   `\nNumber of [args] received: ${actualLength}`
 
+const __errorMsgWrongObjects = arr =>
+  'Every object of the array must contain the following fields:\n* message\n* args' +
+  `\nReceived: ${JSON.stringify(arr)}`
+
 function _postAll (arr = []) {
   if (!Array.isArray(arr)) {
     console.error(new TypeError(__errorMsg(arr)))
@@ -28,7 +32,14 @@ function _postAll (arr = []) {
 
   if (__isStringsArray) return Promise.all(arr.map(msg => this.postMessage(msg)))
 
-  if (__isObjectsArray) return Promise.all(arr.map(({ message, args }) => this.postMessage(message, args)))
+  if (__isObjectsArray) {
+    const invalidArray = arr.some(obj => !obj.hasOwnProperty('message') || !obj.hasOwnProperty('args'))
+    if (invalidArray) {
+      console.error(new TypeError(__errorMsgWrongObjects(arr)))
+      return null
+    }
+    return Promise.all(arr.map(({ message, args }) => this.postMessage(message, args)))
+  }
 
   if (__isArraysArray) {
     if (arr.length !== this.actions.length) {
