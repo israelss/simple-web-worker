@@ -131,6 +131,7 @@ worker.postMessage('func4', ['Overwrited argument'])
 
 >If _[message1,...]_ is `undefined` or no argument is given, **<worker\>** will run all registered actions without arguments.
 <br>If _[{message: message1, args: [args1]},...]_ or _[[args1],...]_ is used, you should use `null` as _[args]_ for the functions that does not expect arguments.
+<br>If _[{message: message1, args: [args1]},...]_ is used, every object must contain the fields `message` and `args`.
 <br>This method works like Promise.all(), but in another thread.
 
 E.g.:
