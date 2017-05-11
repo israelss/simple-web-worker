@@ -1,6 +1,6 @@
 {
   "name": "simple-web-worker",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "An utility to simplify the use of web workers.",
   "main": "dist/sww.min.js",
   "scripts": {
