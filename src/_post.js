@@ -19,7 +19,7 @@ const _post = actions => (msg = null, args) => {
       return _run(work, [args])
     }
 
-    if (args) return _run(work, args.filter(arg => !!arg))
+    if (args) return _run(work, args)
     return _run(work)
   }
 
