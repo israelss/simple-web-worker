@@ -4,10 +4,8 @@
   "description": "An utility to simplify the use of web workers.",
   "main": "dist/sww.min.js",
   "scripts": {
-    "importTests": "NODE_ENV=production rollup --config src/tests/integration/config/rollup.tests.js",
-    "importSworker": "NODE_ENV=production rollup --config src/tests/integration/config/rollup.sworker.js",
-    "preintegration": "yarn importTests && yarn importSworker",
-    "integration": "testcafe all src/tests/integration/*.test.js",
+    "preintegration": "NODE_ENV=production rollup --config src/tests/integration/config/rollup.sworker.js",
+    "integration": "testcafe firefox src/tests/integration/*.test.js",
     "test": "NODE_ENV=development jest",
     "build": "rollup -c",
     "dev": "rollup -c -w"

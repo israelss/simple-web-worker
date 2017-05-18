@@ -1,6 +1,10 @@
 'use strict';
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+  return typeof obj;
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+};
 
 var isArrayOf = function isArrayOf(type) {
   return function (arr) {
@@ -20,8 +24,6 @@ var isArrayOf = function isArrayOf(type) {
   };
 };
 
-var _typeof$1 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 var notValid = function notValid(argumentError) {
   console.error(argumentError);
   return false;
@@ -34,7 +36,7 @@ var invalidActions = function invalidActions() {
 
     if (Array.isArray(actions)) {
       if (types === 'objectsArray' || types === 'actionsArray') return actions.some(function (action) {
-        return (typeof action === 'undefined' ? 'undefined' : _typeof$1(action)) !== 'object' || Array.isArray(action) || action === null;
+        return (typeof action === 'undefined' ? 'undefined' : _typeof(action)) !== 'object' || Array.isArray(action) || action === null;
       });
       if (types === 'stringsArray') return actions.some(function (action) {
         return typeof action !== 'string';
@@ -75,7 +77,7 @@ var wrongType = function wrongType() {
     return true;
   }
 
-  return (typeof obj === 'undefined' ? 'undefined' : _typeof$1(obj)) !== type.toString(); // eslint-disable-line
+  return (typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) !== type.toString(); // eslint-disable-line
 };
 
 var invalidObjectsArray = function invalidObjectsArray(arr) {
