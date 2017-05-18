@@ -1,8 +1,14 @@
 {
-  "presets": [
-    ["env", {
-      "modules": false
-    }]
-  ],
-  "plugins": ["external-helpers"]
+  "env": {
+    "development": {
+      "presets": ["env"]
+    },
+    "production": {
+      "presets": [
+        ["env", {
+          "modules": false
+        }]
+      ]
+    }
+  }
 }
