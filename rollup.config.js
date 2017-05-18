@@ -7,11 +7,11 @@ export default {
   format: 'cjs',
   plugins: [
     babel({
-      exclude: 'node_modules/**' // only transpile our source code
+      exclude: 'node_modules/**'
     }),
     uglify(),
     filesize()
   ],
-  dest: 'dist/sww.min.js', // equivalent to --output
+  dest: 'dist/sww.min.js',
   sourceMap: true
 }

@@ -4,7 +4,11 @@
   "description": "An utility to simplify the use of web workers.",
   "main": "dist/sww.min.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "importTests": "NODE_ENV=production rollup --config src/tests/integration/config/rollup.tests.js",
+    "importSworker": "NODE_ENV=production rollup --config src/tests/integration/config/rollup.sworker.js",
+    "preintegration": "yarn importTests && yarn importSworker",
+    "integration": "testcafe all src/tests/integration/*.test.js",
+    "test": "NODE_ENV=development jest",
     "build": "rollup -c",
     "dev": "rollup -c -w"
   },
@@ -24,12 +28,31 @@
   },
   "homepage": "https://github.com/israelss/simple-web-worker#readme",
   "devDependencies": {
+    "babel-jest": "^20.0.3",
     "babel-plugin-external-helpers": "^6.22.0",
     "babel-preset-env": "^1.4.0",
+    "jest": "^20.0.1",
     "rollup": "^0.41.6",
     "rollup-plugin-babel": "^2.7.1",
     "rollup-plugin-filesize": "^1.3.2",
     "rollup-plugin-uglify": "^1.0.2",
-    "rollup-watch": "^3.2.2"
+    "rollup-watch": "^3.2.2",
+    "standard": "^10.0.2",
+    "testcafe": "^0.15.0"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.js$": "babel-jest"
+    },
+    "moduleFileExtensions": [
+      "js"
+    ],
+    "moduleDirectories": [
+      "node_modules",
+      "src"
+    ],
+    "testMatch": [
+      "**/tests/unit/**/*.test.js"
+    ]
   }
 }
