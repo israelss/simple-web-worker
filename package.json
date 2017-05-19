@@ -6,7 +6,7 @@
   "scripts": {
     "preintegration": "NODE_ENV=production rollup --config src/tests/integration/config/rollup.sworker.js",
     "integration": "testcafe firefox src/tests/integration/*.test.js",
-    "test": "NODE_ENV=development jest",
+    "test": "jest",
     "build": "yarn test && yarn integration && NODE_ENV=production rollup -c",
     "dev": "rollup -c -w"
   },
@@ -39,16 +39,6 @@
     "testcafe": "^0.15.0"
   },
   "jest": {
-    "transform": {
-      "^.+\\.js$": "babel-jest"
-    },
-    "moduleFileExtensions": [
-      "js"
-    ],
-    "moduleDirectories": [
-      "node_modules",
-      "src"
-    ],
     "testMatch": [
       "**/tests/unit/**/*.test.js"
     ]

@@ -1,6 +1,6 @@
 {
   "env": {
-    "development": {
+    "test": {
       "presets": ["env"]
     },
     "production": {

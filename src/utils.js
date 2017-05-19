@@ -1,10 +1,6 @@
 // Argument validation
 const isValidObjectsArray = arr => (fields = []) =>
-  arr.every(obj => {
-    return typeof obj === 'object' &&
-      !Array.isArray(obj) &&
-        fields.every(field => obj.hasOwnProperty(field))
-  })
+  arr.every(obj => fields.every(field => obj.hasOwnProperty(field)))
 
 const testArray = {
   'actionsArray': arr => isValidObjectsArray(arr)(['message', 'func']),
