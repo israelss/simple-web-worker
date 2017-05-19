@@ -6,110 +6,67 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
 };
 
-var isArrayOf = function isArrayOf(type) {
-  return function (arr) {
-    var testItems = null;
-    if (type === 'arrays') testItems = function testItems(item) {
-      return Array.isArray(item);
-    };
-    if (type === 'objects') testItems = function testItems(item) {
-      return (typeof item === 'undefined' ? 'undefined' : _typeof(item)) === 'object' && !Array.isArray(item);
-    };
-    if (type === 'strings') testItems = function testItems(item) {
-      return typeof item === 'string';
-    };
-
-    if (testItems) return arr.every(testItems);
-    return false;
-  };
-};
-
-var notValid = function notValid(argumentError) {
-  console.error(argumentError);
-  return false;
-};
-
-var invalidActions = function invalidActions() {
-  var actions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+// Argument validation
+var isValidObjectsArray = function isValidObjectsArray(arr) {
   return function () {
-    var types = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-
-    if (Array.isArray(actions)) {
-      if (types === 'objectsArray' || types === 'actionsArray') return actions.some(function (action) {
-        return (typeof action === 'undefined' ? 'undefined' : _typeof(action)) !== 'object' || Array.isArray(action) || action === null;
-      });
-      if (types === 'stringsArray') return actions.some(function (action) {
-        return typeof action !== 'string';
-      });
-    }
-    return false;
-  };
-};
-
-var isValidArg = function isValidArg(arg) {
-  return function () {
-    var types = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-
-    if (types === 'null') return arg === null;
-
-    if (types === 'undefined') return arg === undefined;
-
-    if (Array.isArray(types)) return types.some(function (type) {
-      return isValidArg(arg)(type);
-    });
-
-    if (!arg || wrongType(arg, types) || invalidActions(arg)(types)) return false;
-    return true;
-  };
-};
-
-var wrongType = function wrongType() {
-  var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-  var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-
-  if (Array.isArray(type)) return type.every(function (type) {
-    return wrongType(obj, type);
-  });
-
-  if (Array.isArray(obj)) {
-    if (type === 'actionsArray') return invalidObjectsArray(obj)(['message', 'func']);
-    if (type === 'objectsArray' || type === 'stringsArray' || type === 'array') return false;
-    return true;
-  }
-
-  return (typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) !== type.toString(); // eslint-disable-line
-};
-
-var invalidObjectsArray = function invalidObjectsArray(arr) {
-  return function (fields) {
-    return arr.some(function (obj) {
-      return !fields.every(function (field) {
+    var fields = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+    return arr.every(function (obj) {
+      return (typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) === 'object' && !Array.isArray(obj) && fields.every(function (field) {
         return obj.hasOwnProperty(field);
       });
     });
   };
 };
 
-var isValidArgument = function isValidArgument(arg) {
-  return function () {
-    var types = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-    return function () {
-      var argumentError = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+var testArray = {
+  'actionsArray': function actionsArray(arr) {
+    return isValidObjectsArray(arr)(['message', 'func']);
+  },
+  'arraysArray': function arraysArray(arr) {
+    return arr.every(function (item) {
+      return Array.isArray(item);
+    });
+  },
+  'objectsArray': function objectsArray(arr) {
+    return isValidObjectsArray(arr)();
+  },
+  'postParamsArray': function postParamsArray(arr) {
+    return isValidObjectsArray(arr)(['message', 'args']);
+  },
+  'stringsArray': function stringsArray(arr) {
+    return arr.every(function (item) {
+      return typeof item === 'string';
+    });
+  }
+};
 
-      if (Array.isArray(types)) {
-        if (types.some(function (type) {
-          return isValidArg(arg)(type);
-        })) return true;
-
-        return notValid(argumentError);
-      }
-
-      if (!arg || wrongType(arg, types) || invalidActions(arg)(types)) return notValid(argumentError);
-      return true;
-    };
+var isValidArg = function isValidArg(arg) {
+  return function (type) {
+    if (type === 'null') return arg === null;
+    if (type === 'undefined') return arg === undefined;
+    if (Array.isArray(arg)) {
+      if (type !== 'array' && !testArray[type]) return false;
+      if (type === 'array') return true;
+      return testArray[type](arg);
+    }
+    if (arg) return (typeof arg === 'undefined' ? 'undefined' : _typeof(arg)) === type.toString(); // eslint-disable-line
+    return false;
   };
 };
 
+var isValid = function isValid(argument) {
+  return function () {
+    var types = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+
+    if (Array.isArray(types)) return types.some(function (type) {
+      return isValidArg(argument)(type);
+    });
+    if (isValidArg(argument)(types)) return true;
+    return false;
+  };
+};
+
+// Argument error builder
 var argumentError = function argumentError(_ref) {
   var _ref$expected = _ref.expected,
       expected = _ref$expected === undefined ? '' : _ref$expected,
@@ -128,77 +85,9 @@ var argumentError = function argumentError(_ref) {
   }
 };
 
-var filterActions = function filterActions(actions, msg) {
-  return actions.filter(function (_ref2) {
-    var message = _ref2.message;
-    return JSON.stringify(message) === JSON.stringify(msg);
-  }).map(function (action) {
-    return action.func;
-  }).pop();
-};
-
-var removeFrom = function removeFrom(actions) {
-  return function (action) {
-    var index = actions.findIndex(function (_ref3) {
-      var message = _ref3.message;
-      return message === action;
-    });
-    if (index === -1) {
-      console.warn('WARN! Impossible to unregister ' + action + '.\n' + action + ' is not a registered action for this worker.');
-      return [];
-    }
-    return actions.splice(index, 1);
-  };
-};
-
+// Response builder
 var makeResponse = function makeResponse(work) {
   return '\n  self.onmessage = event => {\n    const args = event.data.message.args\n    if (args) {\n      self.postMessage((' + work + ').apply(null, args))\n      return close()\n    }\n    self.postMessage((' + work + ')())\n    return close()\n  }\n';
-};
-
-var pushInto = function pushInto(actions) {
-  return function (action) {
-    return actions.push(action);
-  };
-};
-
-var notArray = function notArray(arr) {
-  return argumentError(notArrayOptions(arr));
-};
-var notArrayOptions = function notArrayOptions(arr) {
-  return {
-    expected: 'an array of strings, an array of objects, an array of arrays or no arguments',
-    received: arr
-  };
-};
-
-var wrongLength = function wrongLength(actualLength) {
-  return function (expectedLength) {
-    return argumentError(wrongLengthOptions(actualLength)(expectedLength));
-  };
-};
-var wrongLengthOptions = function wrongLengthOptions(actualLength) {
-  return function (expectedLength) {
-    return {
-      received: actualLength,
-      expected: 'the same number of [args] as the number of registered actions on the worker',
-      extraInfo: 'This worker has ' + expectedLength + ' actions registered'
-    };
-  };
-};
-
-var wrongObjects = function wrongObjects(arr) {
-  return argumentError(wrongObjectsOptions(arr));
-};
-var wrongObjectsOptions = function wrongObjectsOptions(arr) {
-  return {
-    expected: arr,
-    extraInfo: 'Every object of the array must contain the following fields:\n* message\n* args'
-  };
-};
-
-var returnNull = function returnNull(error) {
-  console.error(error);
-  return null;
 };
 
 var createDisposableWorker = function createDisposableWorker(response) {
@@ -224,14 +113,20 @@ var run = function run() {
   var work = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
   var args = arguments[1];
 
-  if (!isValidArgument(work)('function')(argumentError({ expected: 'a function', received: work }))) {
-    return null;
+  var validWork = isValid(work)('function');
+  var validArgs = isValid(args)(['array', 'undefined']);
+  if (validWork && validArgs) {
+    var worker = createDisposableWorker(makeResponse(work));
+    return worker.post({ args: args });
   }
-  if (!isValidArgument(args)(['array', 'undefined'])(argumentError({ expected: 'an array', received: args }))) {
-    return null;
-  }
-  var response = makeResponse(work);
-  return createDisposableWorker(response).post({ args: args });
+  if (!validWork) console.error(argumentError({ expected: 'a function', received: work }));
+  if (!validArgs) console.error(argumentError({ expected: 'an array', received: args }));
+  return null;
+};
+
+var warnWork = function warnWork(msg) {
+  console.warn('WARN! ' + msg + ' is not a registered action for this worker');
+  return msg + ' is not a registered action for this worker';
 };
 
 var post = function post(actions) {
@@ -239,67 +134,82 @@ var post = function post(actions) {
     var msg = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
     var args = arguments[1];
 
-    var validWork = isValidArgument(msg)('string')(argumentError({ expected: 'a string', received: msg }));
-    var validArgs = isValidArgument(args)(['array', 'undefined'])(argumentError({ expected: 'an array', received: args }));
-    if (validWork && validArgs) {
-      var work = filterActions(actions, msg);
+    var validMessage = isValid(msg)('string');
+    var validArgs = isValid(args)(['array', 'undefined']);
+    if (validMessage && validArgs) {
+      var work = actions.filter(function (_ref) {
+        var message = _ref.message;
+        return JSON.stringify(message) === JSON.stringify(msg);
+      }).map(function (action) {
+        return action.func;
+      }).pop();
 
-      if (!work) {
-        work = function work(msg) {
-          console.warn('WARN! ' + msg + ' is not a registered action for this worker');
-          return msg + ' is not a registered action for this worker';
-        };
-        args = JSON.stringify(msg);
-        return run(work, [args]);
-      }
+      if (!work) return run(warnWork, [JSON.stringify(msg)]);
       if (args) return run(work, args);
-
       return run(work);
     }
+
+    if (!validMessage) console.error(argumentError({ expected: 'a string', received: msg }));
+    if (!validArgs) console.error(argumentError({ expected: 'an array', received: args }));
     return null;
   };
 };
 
+// import { invalidObjectsArray, isArrayOf, notArray, returnNull, wrongLength, wrongObjects } from './utils'
+var options$1 = function options(arr) {
+  return {
+    expected: 'an array of arrays, an array of objects, or an array of strings',
+    received: arr,
+    extraInfo: 'If an array of arrays, ' + 'it must have the same length as the actions registered for this worker.\n' + 'If an array of objects, every object must containing two fields:\n* message\n* args'
+  };
+};
 function postAll() {
   var _this = this;
 
   var arr = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
 
-  if (!Array.isArray(arr)) return returnNull(notArray(arr));
-
-  var isArraysArray = isArrayOf('arrays')(arr);
-  var isObjectsArray = isArrayOf('objects')(arr);
-  var isStringsArray = isArrayOf('strings')(arr);
-
-  if (!(isArraysArray || isObjectsArray || isStringsArray)) return returnNull(notArray(arr));
-
-  if (arr.length === 0) return Promise.all(this.actions.map(function (_ref) {
-    var message = _ref.message;
-    return _this.postMessage(message);
-  }));
-
-  if (isStringsArray) return Promise.all(arr.map(function (msg) {
-    return _this.postMessage(msg);
-  }));
-
-  if (isObjectsArray) {
-    if (invalidObjectsArray(arr)(['message', 'args'])) return returnNull(wrongObjects(arr));
-    return Promise.all(arr.map(function (_ref2) {
-      var message = _ref2.message,
-          args = _ref2.args;
-      return _this.postMessage(message, args);
+  if (isValid(arr)(['arraysArray', 'postParamsArray', 'stringsArray'])) {
+    if (arr.length === 0) return Promise.all(this.actions.map(function (_ref) {
+      var message = _ref.message;
+      return _this.postMessage(message);
     }));
-  }
 
-  if (isArraysArray) {
-    if (arr.length !== this.actions.length) {
-      return returnNull(wrongLength(arr.length)(this.actions.length));
+    if (arr.every(function (item) {
+      return typeof item === 'string';
+    })) {
+      return Promise.all(arr.map(function (msg) {
+        return _this.postMessage(msg);
+      }));
     }
-    return Promise.all(arr.map(function (args, index) {
-      return _this.postMessage(_this.actions[index].message, args);
-    }));
+
+    if (arr.every(function (item) {
+      return (typeof item === 'undefined' ? 'undefined' : _typeof(item)) === 'object' && !Array.isArray(item);
+    })) {
+      return Promise.all(arr.map(function (_ref2) {
+        var message = _ref2.message,
+            args = _ref2.args;
+        return _this.postMessage(message, args);
+      }));
+    }
+
+    if (arr.every(function (item) {
+      return Array.isArray(item);
+    }) && arr.length === this.actions.length) {
+      return Promise.all(arr.map(function (args, index) {
+        return _this.postMessage(_this.actions[index].message, args);
+      }));
+    }
   }
+
+  console.error(argumentError(options$1(arr)));
+  return null;
 }
+
+var pushInto = function pushInto(actions) {
+  return function (action) {
+    return actions.push(action);
+  };
+};
 
 var register = function register(actions) {
   return function () {
@@ -310,7 +220,7 @@ var register = function register(actions) {
       received: action,
       extraInfo: 'Every action should be an object containing two fields:\n* message\n* func'
     };
-    if (isValidArgument(action)(['object', 'objectsArray'])(argumentError(options))) {
+    if (isValid(action)(['object', 'objectsArray'])(argumentError(options))) {
       if (Array.isArray(action)) {
         action.forEach(pushInto(actions));
         return actions.length;
@@ -318,6 +228,20 @@ var register = function register(actions) {
       return pushInto(actions)(action);
     }
     return null;
+  };
+};
+
+var removeFrom = function removeFrom(actions) {
+  return function (action) {
+    var index = actions.findIndex(function (_ref) {
+      var message = _ref.message;
+      return message === action;
+    });
+    if (index === -1) {
+      console.warn('WARN! Impossible to unregister ' + action + '.\n' + action + ' is not a registered action for this worker.');
+      return [];
+    }
+    return actions.splice(index, 1);
   };
 };
 
@@ -329,7 +253,7 @@ var unregister = function unregister(actions) {
       expected: 'an array of strings or a string',
       received: msg
     };
-    if (isValidArgument(msg)(['string', 'stringsArray'])(argumentError(options))) {
+    if (isValid(msg)(['string', 'stringsArray'])(argumentError(options))) {
       var remove = removeFrom(actions);
 
       if (Array.isArray(msg)) {
@@ -363,7 +287,7 @@ var options = function options(actions) {
 var create = function create() {
   var actions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
 
-  if (isValidArgument(actions)('actionsArray')(argumentError(options(actions)))) {
+  if (isValid(actions)('actionsArray')) {
     return {
       actions: actions,
       postMessage: post(actions),
@@ -372,6 +296,7 @@ var create = function create() {
       unregister: unregister(actions)
     };
   }
+  console.error(argumentError(options(actions)));
   return null;
 };
 

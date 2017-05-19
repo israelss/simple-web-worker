@@ -1,59 +1,65 @@
-const __invalidActions = (actions = null) => (types = null) => {
-  if (Array.isArray(actions)) {
-    if (types === 'objectsArray') return actions.some(action => typeof action !== 'object' || Array.isArray(action) || action === null)
-    if (types === 'stringsArray') return actions.some(action => typeof action !== 'string')
+// Argument validation
+const isValidObjectsArray = arr => (fields = []) =>
+  arr.every(obj => {
+    return typeof obj === 'object' &&
+      !Array.isArray(obj) &&
+        fields.every(field => obj.hasOwnProperty(field))
+  })
+
+const testArray = {
+  'actionsArray': arr => isValidObjectsArray(arr)(['message', 'func']),
+  'arraysArray': arr => arr.every(item => Array.isArray(item)),
+  'objectsArray': arr => isValidObjectsArray(arr)(),
+  'postParamsArray': arr => isValidObjectsArray(arr)(['message', 'args']),
+  'stringsArray': arr => arr.every(item => typeof item === 'string')
+}
+
+const isValidArg = arg => type => {
+  if (type === 'null') return arg === null
+  if (type === 'undefined') return arg === undefined
+  if (Array.isArray(arg)) {
+    if (type !== 'array' && !testArray[type]) return false
+    if (type === 'array') return true
+    return testArray[type](arg)
   }
+  if (arg) return typeof arg === type.toString() // eslint-disable-line
   return false
 }
 
-const __isArrayOf = type => arr => {
-  let testItems = null
-  if (type === 'arrays') testItems = item => Array.isArray(item)
-  if (type === 'objects') testItems = item => typeof item === 'object' && !Array.isArray(item)
-  if (type === 'strings') testItems = item => typeof item === 'string'
-
-  if (testItems) return arr.every(testItems)
+const isValid = argument => (types = null) => {
+  if (Array.isArray(types)) return types.some(type => isValidArg(argument)(type))
+  if (isValidArg(argument)(types)) return true
   return false
 }
 
-const __isValidArgument = arg => (types = null) => {
-  if (types === 'null') return arg === null
-
-  if (types === 'undefined') return arg === undefined
-
-  if (Array.isArray(types)) return types.some(type => __isValidArgument(arg)(type))
-
-  if (!arg || __wrongType(arg, types) || __invalidActions(arg)(types)) return false
-  return true
+// Argument error builder
+const argumentError = ({ expected = '', received, extraInfo = '' }) => {
+  try {
+    return new TypeError(`${'You should provide ' + expected}${'\n' + extraInfo}${'\nReceived: ' + JSON.stringify(received)}`)
+  } catch (err) {
+    if (err.message === 'Converting circular structure to JSON') {
+      return new TypeError(`${'You should provide ' + expected}${'\n' + extraInfo}${'\nReceived a circular structure: ' + received}`)
+    }
+    console.error(err)
+    return new TypeError('You should provide something else...')
+  }
 }
 
-const __wrongType = (obj = null, type = '') => {
-  if (Array.isArray(type)) return type.every(type => __wrongType(obj, type))
-
-  if (Array.isArray(obj)) {
-    if (type === 'objectsArray' || type === 'stringsArray' || type === 'array') return false
-    return true
+// Response builder
+const makeResponse = work => `
+  self.onmessage = event => {
+    const args = event.data.message.args
+    if (args) {
+      self.postMessage((${work}).apply(null, args))
+      return close()
+    }
+    self.postMessage((${work})())
+    return close()
   }
+`
 
-  return typeof obj !== type.toString() // eslint-disable-line
+export {
+  makeResponse,
+  argumentError,
+  isValid
 }
-
-const _isArrayOfArrays = arr => __isArrayOf('arrays')(arr)
-const _isArrayOfObjects = arr => __isArrayOf('objects')(arr)
-const _isArrayOfStrings = arr => __isArrayOf('strings')(arr)
-
-const _isValidArgument = arg => (types = null) => (errorMsg = '') => {
-  if (Array.isArray(types)) {
-    const valid = types.some(type => __isValidArgument(arg)(type))
-    if (!valid) console.error(new TypeError(errorMsg))
-    return valid
-  }
-
-  if (!arg || __wrongType(arg, types) || __invalidActions(arg)(types)) {
-    console.error(new TypeError(errorMsg))
-    return false
-  }
-  return true
-}
-
-export { _isArrayOfArrays, _isArrayOfObjects, _isArrayOfStrings, _isValidArgument }
