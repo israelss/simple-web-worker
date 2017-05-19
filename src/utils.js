@@ -1,6 +1,9 @@
 // Argument validation
+const isValidObjectWith = fields => obj =>
+  !!obj && fields.every(field => obj.hasOwnProperty(field))
+
 const isValidObjectsArray = arr => (fields = []) =>
-  arr.every(obj => fields.every(field => obj.hasOwnProperty(field)))
+  arr.every(isValidObjectWith(fields))
 
 const testArray = {
   'actionsArray': arr => isValidObjectsArray(arr)(['message', 'func']),
@@ -13,6 +16,7 @@ const testArray = {
 const isValidArg = arg => type => {
   if (type === 'null') return arg === null
   if (type === 'undefined') return arg === undefined
+  if (type === 'action') return isValidObjectWith(['message', 'func'])(arg)
   if (Array.isArray(arg)) {
     if (type !== 'array' && !testArray[type]) return false
     if (type === 'array') return true
