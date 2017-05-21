@@ -1,38 +1,31 @@
 import { argumentError, isValid } from './utils'
 
-const removeFrom = actions => action => {
-  const index = actions.findIndex(({ message }) => message === action)
-  if (index === -1) {
-    console.warn(`WARN! Impossible to unregister ${action}.\n${action} is not a registered action for this worker.`)
-    return []
-  }
-  return actions.splice(index, 1)
+const removeFrom = actions => msg => {
+  const index = actions.findIndex(({ message }) => message === msg)
+  index === -1
+    ? console.warn(`WARN! Impossible to unregister action with message "${msg}".\nIt is not a registered action for this worker.`)
+    : actions.splice(index, 1)
+  return actions
 }
 
-export const unregister = actions => (msg = null) => {
-  const options = {
+const makeOptions = msg => {
+  return {
     expected: 'an array of strings or a string',
     received: msg
   }
-  if (isValid(msg)(['string', 'stringsArray'])(argumentError(options))) {
-    const remove = removeFrom(actions)
+}
 
+export const unregister = actions => (msg = null) => {
+  if (isValid(msg)(['string', 'stringsArray'])) {
     if (Array.isArray(msg)) {
-      const removed = msg.reduce((removed, action) => {
-        removed = removed.concat(remove(action))
-        return removed
-      }, [])
-
-      if (removed.length === 0) {
-        console.warn(`WARN! Impossible to unregister ${JSON.stringify(msg)}.` +
-                    '\nNone of the actions is a registered action for this worker.')
-        return null
-      }
-      return removed
+      return msg.reduce((actions, message) => {
+        removeFrom(actions)(message)
+        return actions
+      }, actions).length
     }
-
-    return remove(msg)
+    return removeFrom(actions)(msg).length
   }
 
+  console.error(argumentError(makeOptions(msg)))
   return null
 }
