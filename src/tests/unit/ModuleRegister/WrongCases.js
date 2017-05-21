@@ -1,20 +1,15 @@
 /* global test, describe, expect, jest */
 
-// const replacer = (key, value) => {
-//   if (value instanceof Function) return value.toString()
-//   return value
-// }
-
 export default (register) => {
   describe('register - Wrong use cases\n  Register:', () => {
     describe('Logs a warn message when', () => {
-      const warn = message => `WARN! The action ${message} is already registered for this worker`
+      const warn = message => `WARN! An action with message "${message}" is already registered for this worker`
       describe('does not change [actions] length and called with', () => {
         test('an already registered action (one action)', () => {
           const spy = console.warn = jest.fn()
           const registerMock = register([{ message: 'a', func: () => 'a' }])
           registerMock({ message: 'a', func: () => 'a' })
-          expect(spy).toHaveBeenCalledWith(warn(`{"message":"a","func":"function func() {return 'a';}"}`))
+          expect(spy).toHaveBeenCalledWith(warn(`a`))
           expect(spy).toHaveBeenCalledTimes(1)
           return spy.mockRestore()
         })
@@ -26,11 +21,11 @@ export default (register) => {
             { message: 'b', func: () => 'b' }
           ])
           registerMock([
-            { message: 'a', func: () => 'a' },
+            { message: 'a', func: () => 'c' },
             { message: 'b', func: () => 'b' }
           ])
-          expect(spy).toHaveBeenCalledWith(warn(`{"message":"a","func":"function func() {return 'a';}"}`))
-          expect(spy).toHaveBeenCalledWith(warn(`{"message":"b","func":"function func() {return 'b';}"}`))
+          expect(spy).toHaveBeenCalledWith(warn(`a`))
+          expect(spy).toHaveBeenCalledWith(warn(`b`))
           expect(spy).toHaveBeenCalledTimes(2)
           return spy.mockRestore()
         })
@@ -47,8 +42,8 @@ export default (register) => {
             { message: 'b', func: () => 'b' },
             { message: 'c', func: () => 'c' }
           ])
-          expect(spy).toHaveBeenCalledWith(warn(`{"message":"a","func":"function func() {return 'a';}"}`))
-          expect(spy).toHaveBeenCalledWith(warn(`{"message":"b","func":"function func() {return 'b';}"}`))
+          expect(spy).toHaveBeenCalledWith(warn(`a`))
+          expect(spy).toHaveBeenCalledWith(warn(`b`))
           expect(spy).toHaveBeenCalledTimes(2)
           return spy.mockRestore()
         })

@@ -1,4 +1,4 @@
-/* global test, describe, expect, jest */
+/* global test, describe, expect */
 
 const replacer = (key, value) => {
   if (value instanceof Function) return value.toString()

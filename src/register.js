@@ -1,15 +1,10 @@
 import { argumentError, isValid } from './utils'
 
-const JSONreplacer = (key, value) => {
-  if (value instanceof Function) return value.toString()
-  return value
-}
-
 const isActionOf = actions => newAction =>
-  actions.some(action => JSON.stringify(action, JSONreplacer) === JSON.stringify(newAction, JSONreplacer))
+  actions.some(action => action.message === newAction.message)
 
 const warnMsg = action =>
-  `WARN! The action ${JSON.stringify(action, JSONreplacer)} is already registered for this worker`
+  `WARN! An action with message "${action.message}" is already registered for this worker`
 
 const pushInto = actions => action => {
   if (isActionOf(actions)(action)) {
