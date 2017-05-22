@@ -113,11 +113,12 @@ var makeResponse = function makeResponse(work) {
 var createDisposableWorker = function createDisposableWorker(response) {
   var URL = window.URL || window.webkitURL;
   var blob = new Blob([response], { type: 'application/javascript' }); // eslint-disable-line
-  var worker = new Worker(URL.createObjectURL(blob)); // eslint-disable-line
+  var objectURL = URL.createObjectURL(blob);
+  var worker = new Worker(objectURL); // eslint-disable-line
   worker.post = function (message) {
     return new Promise(function (resolve, reject) {
       worker.onmessage = function (event) {
-        URL.revokeObjectURL(blob);
+        URL.revokeObjectURL(objectURL);
         resolve(event.data);
       };
       worker.onerror = function (e) {
