@@ -11,6 +11,15 @@ Received: ${JSON.stringify(received)}`)
 export default (worker) => {
   describe('postAll - Wrong use cases.\n  PostAll:', () => {
     describe('Logs an error message when called with', () => {
+      test('an array with different length from [actions]', () => {
+        const error = buildError([['a']])
+        const spy = console.error = jest.fn()
+        worker.postAll([['a']])
+        expect(spy).toHaveBeenCalledWith(error)
+        expect(spy).toHaveBeenCalledTimes(1)
+        return spy.mockRestore()
+      })
+
       test('a string', () => {
         const error = buildError('a string')
         const spy = console.error = jest.fn()
@@ -122,6 +131,10 @@ export default (worker) => {
     })
 
     describe('Returns null when called with', () => {
+      test('an array with different length from [actions]', () => {
+        return expect(worker.postAll([['a']])).toBeNull()
+      })
+
       test('a string', () => expect(worker.postAll('a string')).toBeNull())
 
       test('an object', () => expect(worker.postAll({an: 'object'})).toBeNull())
