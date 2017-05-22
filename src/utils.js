@@ -1,22 +1,36 @@
 // Argument validation
 const isValidObjectWith = fields => obj =>
-  !!obj && fields.every(field => obj.hasOwnProperty(field))
+  !!obj && !Array.isArray(obj) && fields.every(field => obj.hasOwnProperty(field))
+
+const isValidAction = obj => {
+  return isValidObjectWith(['message', 'func'])(obj) &&
+    typeof obj.func === 'function' && typeof obj.message === 'string'
+}
+
+const isValidActionsArray = arr => arr.every(isValidAction)
+
+const isValidPostParams = obj => {
+  return isValidObjectWith(['message', 'args'])(obj) &&
+    Array.isArray(obj.args) && typeof obj.message === 'string'
+}
+
+const isValidPostParamsArray = arr => arr.every(isValidPostParams)
 
 const isValidObjectsArray = arr => (fields = []) =>
   arr.every(isValidObjectWith(fields))
 
 const testArray = {
-  'actionsArray': arr => isValidObjectsArray(arr)(['message', 'func']),
+  'actionsArray': arr => isValidActionsArray(arr),
   'arraysArray': arr => arr.every(item => Array.isArray(item)),
   'objectsArray': arr => isValidObjectsArray(arr)(),
-  'postParamsArray': arr => isValidObjectsArray(arr)(['message', 'args']),
+  'postParamsArray': arr => isValidPostParamsArray(arr),
   'stringsArray': arr => arr.every(item => typeof item === 'string')
 }
 
 const isValidArg = arg => type => {
   if (type === 'null') return arg === null
   if (type === 'undefined') return arg === undefined
-  if (type === 'action') return isValidObjectWith(['message', 'func'])(arg)
+  if (type === 'action') return isValidAction(arg)
   if (Array.isArray(arg)) {
     if (type !== 'array' && !testArray[type]) return false
     if (type === 'array') return true
@@ -40,8 +54,7 @@ const argumentError = ({ expected = '', received, extraInfo = '' }) => {
     if (err.message === 'Converting circular structure to JSON') {
       return new TypeError(`${'You should provide ' + expected}${'\n' + extraInfo}${'\nReceived a circular structure: ' + received}`)
     }
-    console.error(err)
-    return new TypeError('You should provide something else...')
+    throw err
   }
 }
 
