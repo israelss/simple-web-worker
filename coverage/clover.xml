@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1495422145811" clover="3.2.0">
+  <project timestamp="1495422145812" name="All files">
+    <metrics statements="142" coveredstatements="116" conditionals="97" coveredconditionals="87" methods="63" coveredmethods="57" elements="302" coveredelements="260" complexity="0" loc="142" ncloc="142" packages="1" files="9" classes="9">
+      <file name="create.js" path="/home/israel/PROJETOS/SimpleWebWorker/simple-web-worker/src/create.js">
+        <metrics statements="7" coveredstatements="7" conditionals="3" coveredconditionals="3" methods="2" coveredmethods="2"/>
+        <line num="7" count="1" type="stmt"/>
+        <line num="8" count="12" type="stmt"/>
+        <line num="15" count="1" type="cond" truecount="1" falsecount="0"/>
+        <line num="16" count="16" type="cond" truecount="2" falsecount="0"/>
+        <line num="17" count="4" type="stmt"/>
+        <line num="25" count="12" type="stmt"/>
+        <line num="26" count="12" type="stmt"/>
+      </file>
+      <file name="createDisposableWorker.js" path="/home/israel/PROJETOS/SimpleWebWorker/simple-web-worker/src/createDisposableWorker.js">
+        <metrics statements="15" coveredstatements="1" conditionals="2" coveredconditionals="0" methods="5" coveredmethods="0"/>
+        <line num="1" count="3" type="stmt"/>
+        <line num="2" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+      </file>
+      <file name="index.js" path="/home/israel/PROJETOS/SimpleWebWorker/simple-web-worker/src/index.js">
+        <metrics statements="11" coveredstatements="0" conditionals="6" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="9" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+      </file>
+      <file name="post.js" path="/home/israel/PROJETOS/SimpleWebWorker/simple-web-worker/src/post.js">
+        <metrics statements="16" coveredstatements="16" conditionals="13" coveredconditionals="13" methods="5" coveredmethods="5"/>
+        <line num="4" count="2" type="stmt"/>
+        <line num="5" count="2" type="stmt"/>
+        <line num="6" count="2" type="stmt"/>
+        <line num="9" count="5" type="cond" truecount="1" falsecount="0"/>
+        <line num="10" count="41" type="stmt"/>
+        <line num="11" count="41" type="stmt"/>
+        <line num="12" count="41" type="cond" truecount="4" falsecount="0"/>
+        <line num="13" count="14" type="stmt"/>
+        <line num="14" count="56" type="stmt"/>
+        <line num="15" count="12" type="stmt"/>
+        <line num="18" count="14" type="cond" truecount="2" falsecount="0"/>
+        <line num="19" count="12" type="cond" truecount="2" falsecount="0"/>
+        <line num="20" count="6" type="stmt"/>
+        <line num="23" count="27" type="cond" truecount="2" falsecount="0"/>
+        <line num="24" count="27" type="cond" truecount="2" falsecount="0"/>
+        <line num="25" count="27" type="stmt"/>
+      </file>
+      <file name="postAll.js" path="/home/israel/PROJETOS/SimpleWebWorker/simple-web-worker/src/postAll.js">
+        <metrics statements="12" coveredstatements="12" conditionals="15" coveredconditionals="15" methods="9" coveredmethods="9"/>
+        <line num="4" count="2" type="stmt"/>
+        <line num="5" count="30" type="stmt"/>
+        <line num="14" count="38" type="cond" truecount="2" falsecount="0"/>
+        <line num="15" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="17" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="18" count="3" type="stmt"/>
+        <line num="21" count="8" type="cond" truecount="4" falsecount="0"/>
+        <line num="22" count="3" type="stmt"/>
+        <line num="25" count="14" type="cond" truecount="4" falsecount="0"/>
+        <line num="26" count="12" type="stmt"/>
+        <line num="30" count="30" type="stmt"/>
+        <line num="31" count="30" type="stmt"/>
+      </file>
+      <file name="register.js" path="/home/israel/PROJETOS/SimpleWebWorker/simple-web-worker/src/register.js">
+        <metrics statements="20" coveredstatements="20" conditionals="7" coveredconditionals="7" methods="10" coveredmethods="10"/>
+        <line num="3" count="24" type="stmt"/>
+        <line num="4" count="32" type="stmt"/>
+        <line num="6" count="2" type="stmt"/>
+        <line num="7" count="10" type="stmt"/>
+        <line num="9" count="24" type="stmt"/>
+        <line num="10" count="24" type="cond" truecount="2" falsecount="0"/>
+        <line num="11" count="10" type="stmt"/>
+        <line num="12" count="10" type="stmt"/>
+        <line num="14" count="14" type="stmt"/>
+        <line num="17" count="2" type="stmt"/>
+        <line num="18" count="10" type="stmt"/>
+        <line num="25" count="28" type="cond" truecount="1" falsecount="0"/>
+        <line num="26" count="24" type="cond" truecount="2" falsecount="0"/>
+        <line num="27" count="14" type="cond" truecount="2" falsecount="0"/>
+        <line num="28" count="8" type="stmt"/>
+        <line num="29" count="18" type="stmt"/>
+        <line num="30" count="18" type="stmt"/>
+        <line num="34" count="6" type="stmt"/>
+        <line num="36" count="10" type="stmt"/>
+        <line num="37" count="10" type="stmt"/>
+      </file>
+      <file name="run.js" path="/home/israel/PROJETOS/SimpleWebWorker/simple-web-worker/src/run.js">
+        <metrics statements="9" coveredstatements="9" conditionals="9" coveredconditionals="9" methods="1" coveredmethods="1"/>
+        <line num="4" count="3" type="cond" truecount="1" falsecount="0"/>
+        <line num="5" count="36" type="stmt"/>
+        <line num="6" count="36" type="stmt"/>
+        <line num="7" count="36" type="cond" truecount="4" falsecount="0"/>
+        <line num="8" count="22" type="stmt"/>
+        <line num="9" count="22" type="stmt"/>
+        <line num="11" count="14" type="cond" truecount="2" falsecount="0"/>
+        <line num="12" count="14" type="cond" truecount="2" falsecount="0"/>
+        <line num="13" count="14" type="stmt"/>
+      </file>
+      <file name="unregister.js" path="/home/israel/PROJETOS/SimpleWebWorker/simple-web-worker/src/unregister.js">
+        <metrics statements="15" coveredstatements="15" conditionals="7" coveredconditionals="7" methods="7" coveredmethods="7"/>
+        <line num="3" count="16" type="stmt"/>
+        <line num="4" count="20" type="stmt"/>
+        <line num="5" count="16" type="cond" truecount="2" falsecount="0"/>
+        <line num="8" count="16" type="stmt"/>
+        <line num="11" count="2" type="stmt"/>
+        <line num="12" count="10" type="stmt"/>
+        <line num="18" count="24" type="cond" truecount="1" falsecount="0"/>
+        <line num="19" count="20" type="cond" truecount="2" falsecount="0"/>
+        <line num="20" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="21" count="6" type="stmt"/>
+        <line num="22" count="12" type="stmt"/>
+        <line num="23" count="12" type="stmt"/>
+        <line num="26" count="4" type="stmt"/>
+        <line num="29" count="10" type="stmt"/>
+        <line num="30" count="10" type="stmt"/>
+      </file>
+      <file name="utils.js" path="/home/israel/PROJETOS/SimpleWebWorker/simple-web-worker/src/utils.js">
+        <metrics statements="37" coveredstatements="36" conditionals="35" coveredconditionals="33" methods="23" coveredmethods="23"/>
+        <line num="2" count="99" type="stmt"/>
+        <line num="3" count="119" type="cond" truecount="3" falsecount="0"/>
+        <line num="5" count="7" type="stmt"/>
+        <line num="6" count="65" type="cond" truecount="3" falsecount="0"/>
+        <line num="10" count="23" type="stmt"/>
+        <line num="12" count="7" type="stmt"/>
+        <line num="13" count="32" type="cond" truecount="3" falsecount="0"/>
+        <line num="17" count="28" type="stmt"/>
+        <line num="19" count="7" type="cond" truecount="1" falsecount="0"/>
+        <line num="20" count="2" type="stmt"/>
+        <line num="22" count="7" type="stmt"/>
+        <line num="23" count="23" type="stmt"/>
+        <line num="24" count="48" type="stmt"/>
+        <line num="25" count="2" type="stmt"/>
+        <line num="26" count="28" type="stmt"/>
+        <line num="27" count="55" type="stmt"/>
+        <line num="30" count="458" type="stmt"/>
+        <line num="31" count="458" type="cond" truecount="2" falsecount="0"/>
+        <line num="32" count="456" type="cond" truecount="2" falsecount="0"/>
+        <line num="33" count="388" type="cond" truecount="2" falsecount="0"/>
+        <line num="34" count="356" type="cond" truecount="2" falsecount="0"/>
+        <line num="35" count="149" type="cond" truecount="4" falsecount="0"/>
+        <line num="36" count="136" type="cond" truecount="2" falsecount="0"/>
+        <line num="37" count="122" type="stmt"/>
+        <line num="39" count="207" type="cond" truecount="2" falsecount="0"/>
+        <line num="40" count="83" type="stmt"/>
+        <line num="43" count="291" type="cond" truecount="0" falsecount="1"/>
+        <line num="44" count="335" type="cond" truecount="2" falsecount="0"/>
+        <line num="45" count="123" type="cond" truecount="2" falsecount="0"/>
+        <line num="46" count="52" type="stmt"/>
+        <line num="50" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="51" count="108" type="stmt"/>
+        <line num="52" count="108" type="stmt"/>
+        <line num="54" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="55" count="1" type="stmt"/>
+        <line num="57" count="0" type="stmt"/>
+        <line num="62" count="7" type="stmt"/>
+      </file>
+    </metrics>
+  </project>
+</coverage>

@@ -1,15 +1,18 @@
-import { _create } from './_create'
-import { _run } from './_run'
+import { create } from './create'
+import { run } from './run'
 
-let WorkerWrapper = null
-
-if (window.Worker) {
-  WorkerWrapper = {
-    create: _create,
-    run: _run
+const createWrapper = () => {
+  if (!window.Worker) {
+    console.error('This browser does not support Workers.')
+    return null
   }
-} else {
-  console.warn('Your browser does not support Workers.')
+  if (!(window.URL.createObjectURL || window.webkitURL.createObjectURL)) {
+    console.error('This browser does not have URL.createObjectURL method.')
+    return null
+  }
+  return { create, run }
 }
+
+const WorkerWrapper = createWrapper()
 
 export default WorkerWrapper
