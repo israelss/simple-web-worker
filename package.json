@@ -41,6 +41,7 @@
   "jest": {
     "testMatch": [
       "**/tests/unit/**/*.test.js"
-    ]
+    ],
+    "collectCoverageFrom": ["src/*.js"]
   }
 }
