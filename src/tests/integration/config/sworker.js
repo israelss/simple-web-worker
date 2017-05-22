@@ -7,20 +7,40 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 };
 
 // Argument validation
+var isValidObjectWith = function isValidObjectWith(fields) {
+  return function (obj) {
+    return !!obj && !Array.isArray(obj) && fields.every(function (field) {
+      return obj.hasOwnProperty(field);
+    });
+  };
+};
+
+var isValidAction = function isValidAction(obj) {
+  return isValidObjectWith(['message', 'func'])(obj) && typeof obj.func === 'function' && typeof obj.message === 'string';
+};
+
+var isValidActionsArray = function isValidActionsArray(arr) {
+  return arr.every(isValidAction);
+};
+
+var isValidPostParams = function isValidPostParams(obj) {
+  return isValidObjectWith(['message', 'args'])(obj) && Array.isArray(obj.args) && typeof obj.message === 'string';
+};
+
+var isValidPostParamsArray = function isValidPostParamsArray(arr) {
+  return arr.every(isValidPostParams);
+};
+
 var isValidObjectsArray = function isValidObjectsArray(arr) {
   return function () {
     var fields = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-    return arr.every(function (obj) {
-      return (typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) === 'object' && !Array.isArray(obj) && fields.every(function (field) {
-        return obj.hasOwnProperty(field);
-      });
-    });
+    return arr.every(isValidObjectWith(fields));
   };
 };
 
 var testArray = {
   'actionsArray': function actionsArray(arr) {
-    return isValidObjectsArray(arr)(['message', 'func']);
+    return isValidActionsArray(arr);
   },
   'arraysArray': function arraysArray(arr) {
     return arr.every(function (item) {
@@ -31,7 +51,7 @@ var testArray = {
     return isValidObjectsArray(arr)();
   },
   'postParamsArray': function postParamsArray(arr) {
-    return isValidObjectsArray(arr)(['message', 'args']);
+    return isValidPostParamsArray(arr);
   },
   'stringsArray': function stringsArray(arr) {
     return arr.every(function (item) {
@@ -44,6 +64,7 @@ var isValidArg = function isValidArg(arg) {
   return function (type) {
     if (type === 'null') return arg === null;
     if (type === 'undefined') return arg === undefined;
+    if (type === 'action') return isValidAction(arg);
     if (Array.isArray(arg)) {
       if (type !== 'array' && !testArray[type]) return false;
       if (type === 'array') return true;
@@ -80,8 +101,7 @@ var argumentError = function argumentError(_ref) {
     if (err.message === 'Converting circular structure to JSON') {
       return new TypeError('' + ('You should provide ' + expected) + ('\n' + extraInfo) + ('\nReceived a circular structure: ' + received));
     }
-    console.error(err);
-    return new TypeError('You should provide something else...');
+    throw err;
   }
 };
 
@@ -97,7 +117,8 @@ var createDisposableWorker = function createDisposableWorker(response) {
   worker.post = function (message) {
     return new Promise(function (resolve, reject) {
       worker.onmessage = function (event) {
-        return resolve(event.data);
+        URL.revokeObjectURL(blob);
+        resolve(event.data);
       };
       worker.onerror = function (e) {
         console.error('Error: Line ' + e.lineno + ' in ' + e.filename + ': ' + e.message);
@@ -156,7 +177,7 @@ var post = function post(actions) {
 };
 
 // import { invalidObjectsArray, isArrayOf, notArray, returnNull, wrongLength, wrongObjects } from './utils'
-var options$1 = function options(arr) {
+var makeOptionsFor = function makeOptionsFor(arr) {
   return {
     expected: 'an array of arrays, an array of objects, or an array of strings',
     received: arr,
@@ -201,13 +222,37 @@ function postAll() {
     }
   }
 
-  console.error(argumentError(options$1(arr)));
+  console.error(argumentError(makeOptionsFor(arr)));
   return null;
 }
 
+var isActionOf = function isActionOf(actions) {
+  return function (newAction) {
+    return actions.some(function (action) {
+      return action.message === newAction.message;
+    });
+  };
+};
+
+var warnMsg = function warnMsg(action) {
+  return 'WARN! An action with message "' + action.message + '" is already registered for this worker';
+};
+
 var pushInto = function pushInto(actions) {
   return function (action) {
+    if (isActionOf(actions)(action)) {
+      console.warn(warnMsg(action));
+      return actions.length;
+    }
     return actions.push(action);
+  };
+};
+
+var makeOptionsFor$1 = function makeOptionsFor(action) {
+  return {
+    expected: 'an array of actions or an action',
+    received: action,
+    extraInfo: 'Every action should be an object containing two fields:\n* message\n* func'
   };
 };
 
@@ -215,33 +260,36 @@ var register = function register(actions) {
   return function () {
     var action = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
-    var options = {
-      expected: 'an array of actions or an action',
-      received: action,
-      extraInfo: 'Every action should be an object containing two fields:\n* message\n* func'
-    };
-    if (isValid(action)(['object', 'objectsArray'])(argumentError(options))) {
+    if (isValid(action)(['action', 'actionsArray'])) {
       if (Array.isArray(action)) {
-        action.forEach(pushInto(actions));
-        return actions.length;
+        return action.reduce(function (actions, action) {
+          pushInto(actions)(action);
+          return actions;
+        }, actions).length;
       }
+
       return pushInto(actions)(action);
     }
+    console.error(argumentError(makeOptionsFor$1(action)));
     return null;
   };
 };
 
 var removeFrom = function removeFrom(actions) {
-  return function (action) {
+  return function (msg) {
     var index = actions.findIndex(function (_ref) {
       var message = _ref.message;
-      return message === action;
+      return message === msg;
     });
-    if (index === -1) {
-      console.warn('WARN! Impossible to unregister ' + action + '.\n' + action + ' is not a registered action for this worker.');
-      return [];
-    }
-    return actions.splice(index, 1);
+    index === -1 ? console.warn('WARN! Impossible to unregister action with message "' + msg + '".\nIt is not a registered action for this worker.') : actions.splice(index, 1);
+    return actions;
+  };
+};
+
+var makeOptions = function makeOptions(msg) {
+  return {
+    expected: 'an array of strings or a string',
+    received: msg
   };
 };
 
@@ -249,29 +297,17 @@ var unregister = function unregister(actions) {
   return function () {
     var msg = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
-    var options = {
-      expected: 'an array of strings or a string',
-      received: msg
-    };
-    if (isValid(msg)(['string', 'stringsArray'])(argumentError(options))) {
-      var remove = removeFrom(actions);
-
+    if (isValid(msg)(['string', 'stringsArray'])) {
       if (Array.isArray(msg)) {
-        var removed = msg.reduce(function (removed, action) {
-          removed = removed.concat(remove(action));
-          return removed;
-        }, []);
-
-        if (removed.length === 0) {
-          console.warn('WARN! Impossible to unregister ' + JSON.stringify(msg) + '.' + '\nNone of the actions is a registered action for this worker.');
-          return null;
-        }
-        return removed;
+        return msg.reduce(function (actions, message) {
+          removeFrom(actions)(message);
+          return actions;
+        }, actions).length;
       }
-
-      return remove(msg);
+      return removeFrom(actions)(msg).length;
     }
 
+    console.error(argumentError(makeOptions(msg)));
     return null;
   };
 };
