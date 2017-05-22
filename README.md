@@ -40,6 +40,7 @@ Obviously, you don't have to call it `SWorker`. You are free to use the name you
 >* _[args]_ is an optional array of arguments that will be used by _func_
 
 >This method creates a disposable web worker, runs and returns the result of given function and closes the worker.
+<br>
 <br>This method works like Promise.resolve(), but in another thread.
 
 E.g.:
@@ -59,6 +60,7 @@ SWorker.run((arg1, arg2) => `SWorker run 2: ${arg1} ${arg2}`, ['Another', 'funct
 >* _[actions]_ is an optional array of objects with two fields, `message` and `func`. Essentially, it is a messages-actions map.
 
 >If _[actions]_ is omitted or `undefined`, the created **<worker\>** will have no registered actions, so you'll have to use the method `register` before you can use the **<worker\>**.
+<br>
 <br>If you plan to reuse a **<worker\>**, you should use this method. It creates a reusable **<worker\>** (not a real Web Worker, more on this ahead) with determined actions to be runned through its `postMessage()` or `postAll()` methods.
 
 E.g.:
@@ -81,7 +83,9 @@ let worker = SWorker.create(actions)
 >* _[args]_ is an optional array of arguments that will be used by the function registered with _message_
 
 >When the function does not expect any arguments or the expected arguments have default values, _[args]_ can be omitted safely.
+<br>
 <br>When the expected arguments do not have default values, _[args]_ should be provided.
+<br>
 <br>This method works like Promise.resolve(), but in another thread.
 
 E.g.:
@@ -130,7 +134,11 @@ worker.postMessage('func4', ['Overwrited argument'])
 >    * _[args1],..._ - arrays of arguments to be used by the registered actions.
 
 >If _[message1,...]_ is `undefined` or no argument is given, **<worker\>** will run all registered actions without arguments.
-<br>If _[{message: message1, args: [args1]},...]_ or _[[args1],...]_ is used, you should use `null` as _[args]_ for the functions that does not expect arguments.
+<br>
+<br>If _[{message: message1, args: [args1]},...]_ or _[[args1],...]_ is used, you should use `[]` (an empty array) as _[args]_ for the functions that does not expect arguments, or if the respective argument of your function has a default value and you want it to be used. If you use `[null]` this will be the value assumed by function argument.
+<br>
+<br>When using _[[args1],...]_, you MUST input the same number of arguments as registered actions, even if some action doesn't accept any arguments! In that case use a `[]`, as stated above. See examples below.
+<br>
 <br>If _[{message: message1, args: [args1]},...]_ is used, every object must contain the fields `message` and `args`.
 <br>This method works like Promise.all(), but in another thread.
 
@@ -153,15 +161,15 @@ worker.postAll(['func1', 'func3'])
   .then(console.log) // logs ['Worker 1: Working on func1', 'Worker 3: undefined']
   .catch(console.error) // logs any possible error
 
-worker.postAll([{ message: 'func1', args: null }, { message: 'func3', args: ['Working on func3'] })
+worker.postAll([{ message: 'func1', args: [] }, { message: 'func3', args: ['Working on func3'] })
   .then(console.log) // logs ['Worker 1: Working on func1', 'Worker 3: Working on func3']
   .catch(console.error) // logs any possible error
 
-worker.postAll([[null], ['Working on func2'], ['Working on func3'], [null]])
+worker.postAll([[], ['Working on func2'], ['Working on func3'], []])
   .then(console.log) // logs ['Worker 1: Working on func1', 'Worker 2: Working on func2', 'Worker 3: Working on func3', 'Worker 4: Working on func4']
   .catch(console.error) // logs any possible error
 
-worker.postAll([[null], ['func2'], ['func3'], ['Overwriting default value of arg on func4']])
+worker.postAll([[], ['func2'], ['func3'], ['Overwriting default value of arg on func4']])
   .then(console.log) // logs ['Worker 1: Working on func1', 'Worker 2: func2', 'Worker 3: func3', 'Worker 4: Overwriting default value of arg on func4']
   .catch(console.error) // logs any possible error
 ```
