@@ -1,7 +1,7 @@
 // import { invalidObjectsArray, isArrayOf, notArray, returnNull, wrongLength, wrongObjects } from './utils'
 import { isValid, argumentError } from './utils'
 
-const options = arr => {
+const makeOptionsFor = arr => {
   return {
     expected: 'an array of arrays, an array of objects, or an array of strings',
     received: arr,
@@ -27,6 +27,6 @@ export function postAll (arr = []) {
     }
   }
 
-  console.error(argumentError(options(arr)))
+  console.error(argumentError(makeOptionsFor(arr)))
   return null
 }
