@@ -3,12 +3,13 @@
 
 ## Changelog
 
-### **1.1.0**
+### **1.2.0**
 
 #### _Highlights:_
-* Providing local variables as arguments to functions is now supported.
+* Added tests
+* Fixed `object URL`'s not being revoked when worker is not being used anymore.
 
-See full changelog [here](https://github.com/israelss/simple-web-worker/blob/master/changelog.md#110).
+See full changelog [here](https://github.com/israelss/simple-web-worker/blob/master/changelog.md#120).
 
 ## Why
 

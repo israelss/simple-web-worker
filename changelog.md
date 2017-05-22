@@ -1,5 +1,12 @@
 # Changelog
 
+## **1.2.0**
+
+* Added tests
+* Fixed `object URL`'s not being revoked when worker is not being used anymore.
+* Code refactored & improved
+* Uploaded coverage results
+
 ## **1.1.0**
 
 * Providing local variables as arguments to functions is now supported.
