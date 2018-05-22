@@ -11,7 +11,8 @@ const actions = [
   { message: 'a', func: () => 'a' },
   { message: 'b', func: () => 'b' },
   { message: 'c', func: arg => arg },
-  { message: 'd', func: (arg = 'default') => arg }
+  { message: 'd', func: (arg = 'default') => arg },
+  { message: 'func5', func: (arg = 'Asynchronous') => new Promise(resolve => { setTimeout(() => { resolve(arg) }, 100) }) }
 ]
 
 const postMessage = (msg, args) => {

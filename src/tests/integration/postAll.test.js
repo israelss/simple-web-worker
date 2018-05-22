@@ -14,7 +14,7 @@ fixture(`<worker>.postAll`)
 
 test('Without args, without message', async t => {
   const testResult = await ClientFunction(() => postAllTests.t1())()
-  const expected = stringify(['a', 'b', 'undefined', 'default'])
+  const expected = stringify(['a', 'b', 'undefined', 'default', 'undefined'])
   const testParagraph = Selector('#result').textContent
   await t.expect(testResult).typeOf('array')
   await t.expect(stringify(testResult)).eql(expected)
@@ -61,7 +61,7 @@ test('More than one message (array of objects)', async t => {
 
 test('Array of arrays (null in every array)', async t => {
   const testResult = await ClientFunction(() => postAllTests.t6())()
-  const expected = stringify(['a', 'b', null, null])
+  const expected = stringify(['a', 'b', null, null, null])
   const testParagraph = Selector('#result').textContent
   await t.expect(testResult).typeOf('array')
   await t.expect(stringify(testResult)).eql(expected)
@@ -70,7 +70,7 @@ test('Array of arrays (null in every array)', async t => {
 
 test('Array of arrays (overwriting a default value)', async t => {
   const testResult = await ClientFunction(() => postAllTests.t7())()
-  const expected = stringify(['a', 'b', 'something', 'overwrited'])
+  const expected = stringify(['a', 'b', 'something', 'overwrited', 'overwrited 2'])
   const testParagraph = Selector('#result').textContent
   await t.expect(testResult).typeOf('array')
   await t.expect(stringify(testResult)).eql(expected)
@@ -79,7 +79,7 @@ test('Array of arrays (overwriting a default value)', async t => {
 
 test('Array of arrays (relying on a default value)', async t => {
   const testResult = await ClientFunction(() => postAllTests.t8())()
-  const expected = stringify(['a', 'b', 'something', 'default'])
+  const expected = stringify(['a', 'b', 'something', 'default', 'asynchronous'])
   const testParagraph = Selector('#result').textContent
   await t.expect(testResult).typeOf('array')
   await t.expect(stringify(testResult)).eql(expected)

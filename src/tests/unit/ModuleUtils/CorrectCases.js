@@ -9,14 +9,19 @@ export default (utilsModule) => {
   self.onmessage = event => {
     const args = event.data.message.args
     if (args) {
-      self.postMessage((function () {return 'a';}).apply(null, args))
-      return close()
+      return Promise.resolve((function () {return 'a';}).apply(null, args))
+        .then(result => { self.postMessage(result) })
+        .then(() => close())
+        .catch(err => setTimeout(() => { throw err; }))
     }
-    self.postMessage((function () {return 'a';})())
-    return close()
+    return Promise
+      .resolve((function () {return 'a';})())
+      .then(result => { self.postMessage(result) })
+      .then(() => close())
+      .catch(err => setTimeout(() => { throw err; }))
   }
-`
-        expect(actual).toBe(expected)
+`.trim()
+        expect(actual.trim()).toBe(expected)
       })
 
       test('with a function expression', () => {
@@ -25,14 +30,19 @@ export default (utilsModule) => {
   self.onmessage = event => {
     const args = event.data.message.args
     if (args) {
-      self.postMessage((function () {return 'a';}).apply(null, args))
-      return close()
+      return Promise.resolve((function () {return 'a';}).apply(null, args))
+        .then(result => { self.postMessage(result) })
+        .then(() => close())
+        .catch(err => setTimeout(() => { throw err; }))
     }
-    self.postMessage((function () {return 'a';})())
-    return close()
+    return Promise
+      .resolve((function () {return 'a';})())
+      .then(result => { self.postMessage(result) })
+      .then(() => close())
+      .catch(err => setTimeout(() => { throw err; }))
   }
-`
-        expect(actual).toBe(expected)
+`.trim()
+        expect(actual.trim()).toBe(expected)
       })
     })
 

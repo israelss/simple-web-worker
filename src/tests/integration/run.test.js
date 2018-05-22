@@ -66,3 +66,12 @@ test('With args === undefined && no default', async t => {
   await t.expect(workerResult).eql(expected)
   await t.expect(testParagraph).eql(expected)
 })
+
+test('With args && with => (promise version)', async t => {
+  const workerResult = await ClientFunction(() => runTests.t8())()
+  const testParagraph = Selector('#result').textContent
+  const expected = 'Run with args and with arrow function (promise version)'
+  await t.expect(workerResult).typeOf('string')
+  await t.expect(workerResult).eql(expected)
+  await t.expect(testParagraph).eql(expected)
+})

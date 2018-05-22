@@ -21,7 +21,8 @@ const postAllTests = {
         const arg1 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'default'
         return arg1
       }
-    }
+    },
+    { message: 'e', func: arg => new Promise(resolve => { setTimeout(() => { resolve(arg) }, 100) }) },
   ]),
   t1 () {
     return this.worker.postAll()
@@ -67,7 +68,7 @@ const postAllTests = {
       .catch(err => err)
   },
   t6 () {
-    return this.worker.postAll([[null], [null], [null], [null]])
+    return this.worker.postAll([[null], [null], [null], [null], [null]])
       .then(result => {
         console.log(result)
         resultEl.innerHTML = stringify(result)
@@ -76,7 +77,7 @@ const postAllTests = {
       .catch(err => err)
   },
   t7 () {
-    return this.worker.postAll([[], ['ignored', 'args'], ['something'], ['overwrited']])
+    return this.worker.postAll([[], ['ignored', 'args'], ['something'], ['overwrited'], ['overwrited 2']])
       .then(result => {
         resultEl.innerHTML = stringify(result)
         return result
@@ -84,7 +85,7 @@ const postAllTests = {
       .catch(err => err)
   },
   t8 () {
-    return this.worker.postAll([[], ['ignored', 'args'], ['something'], []])
+    return this.worker.postAll([[], ['ignored', 'args'], ['something'], [], ['asynchronous']])
       .then(result => {
         resultEl.innerHTML = stringify(result)
         return result
@@ -272,6 +273,16 @@ const postMessageTests = {
         return result
       })
       .catch(err => err)
+  },
+
+  t8 () {
+    const worker = WorkerWrapper.create([{ message: 'a', func: arg => new Promise(resolve => { setTimeout(() => { resolve(`${arg}`) }, 100) }) }])
+    return worker.postMessage('a', ['a'])
+      .then(result => {
+        resultEl.innerHTML = result
+        return result
+      })
+      .catch(err => err)
   }
 }
 
@@ -370,6 +381,16 @@ const runTests = {
   // Run without args but without default
   t7 () {
     return WorkerWrapper.run((arg1) => `Run with ${arg1}`, undefined)
+      .then(result => {
+        resultEl.innerHTML = result
+        return result
+      })
+      .catch(err => err)
+  },
+
+  // Run with args and with arrow function (promise version)
+  t8 () {
+    return WorkerWrapper.run((arg1, arg2) => new Promise(resolve => { setTimeout(() => { resolve(`Run ${arg1} and ${arg2}`) }, 100) }), ['with args', 'with arrow function (promise version)'])
       .then(result => {
         resultEl.innerHTML = result
         return result

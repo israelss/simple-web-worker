@@ -3,6 +3,10 @@
 
 ## Changelog
 
+### **1.2.1**
+* Added support for promises as input functions
+  * TODO: more extensive testing needed, but all 34 integration tests and 242 unit tests pass at time of writing
+
 ### **1.2.0**
 
 #### _Highlights:_
