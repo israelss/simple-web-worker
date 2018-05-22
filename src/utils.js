@@ -63,11 +63,16 @@ const makeResponse = work => `
   self.onmessage = event => {
     const args = event.data.message.args
     if (args) {
-      self.postMessage((${work}).apply(null, args))
-      return close()
+      return Promise.resolve((${work}).apply(null, args))
+        .then(result => { self.postMessage(result) })
+        .then(() => close())
+        .catch(err => setTimeout(() => { throw err; }))
     }
-    self.postMessage((${work})())
-    return close()
+    return Promise
+      .resolve((${work})())
+      .then(result => { self.postMessage(result) })
+      .then(() => close())
+      .catch(err => setTimeout(() => { throw err; }))
   }
 `
 

@@ -8,7 +8,8 @@ const actions = [
   { message: 'func1', func: () => `Worker 1: Working on func1` },
   { message: 'func2', func: arg => `Worker 2: ${arg}` },
   { message: 'func3', func: arg => `Worker 3: ${arg}` },
-  { message: 'func4', func: (arg = 'Working on func4') => `Worker 4: ${arg}` }
+  { message: 'func4', func: (arg = 'Working on func4') => `Worker 4: ${arg}` },
+  { message: 'func5', func: (arg = 'Asynchronous work on func 5') => new Promise(resolve => { setTimeout(() => { resolve(`Worker 5: ${arg}`) }, 100) }) }
 ]
 const postMock = post(actions)
 beforeEach(() => {
