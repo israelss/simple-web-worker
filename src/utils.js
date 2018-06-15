@@ -60,7 +60,7 @@ const argumentError = ({ expected = '', received, extraInfo = '' }) => {
 
 // Response builder
 const makeResponse = work => `
-  self.onmessage = event => {
+  self.onmessage = function(event) {
     const args = event.data.message.args
     if (args) {
       self.postMessage((${work}).apply(null, args))
