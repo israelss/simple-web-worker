@@ -1,6 +1,6 @@
 {
-  "name": "simple-web-worker",
-  "version": "1.2.0",
+  "name": "@dexcare/simple-web-worker",
+  "version": "1.2.4",
   "description": "An utility to simplify the use of web workers.",
   "main": "dist/sww.min.js",
   "scripts": {
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/israelss/simple-web-worker.git"
+    "url": "git+https://github.com/dexcare/simple-web-worker.git"
   },
   "keywords": [
     "Web",
@@ -22,9 +22,9 @@
   "author": "Israel Sant'Anna <israel.santanna@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/israelss/simple-web-worker/issues"
+    "url": "https://github.com/dexcare/simple-web-worker/issues"
   },
-  "homepage": "https://github.com/israelss/simple-web-worker#readme",
+  "homepage": "https://github.com/dexcare/simple-web-worker#readme",
   "devDependencies": {
     "babel-jest": "^20.0.3",
     "babel-plugin-external-helpers": "^6.22.0",

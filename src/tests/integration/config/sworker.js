@@ -338,6 +338,9 @@ var create = function create() {
 };
 
 var createWrapper = function createWrapper() {
+  if ('undefined' === typeof window) {
+    return null;
+  }
   if (!window.Worker) {
     console.error('This browser does not support Workers.');
     return null;
