@@ -9,10 +9,14 @@ export default (utilsModule) => {
   self.onmessage = function(event) {
     const args = event.data.message.args
     if (args) {
-      self.postMessage((function () {return 'a';}).apply(null, args))
+      self.postMessage((function () {
+          return 'a';
+        }).apply(null, args))
       return close()
     }
-    self.postMessage((function () {return 'a';})())
+    self.postMessage((function () {
+          return 'a';
+        })())
     return close()
   }
 `
@@ -25,10 +29,14 @@ export default (utilsModule) => {
   self.onmessage = function(event) {
     const args = event.data.message.args
     if (args) {
-      self.postMessage((function () {return 'a';}).apply(null, args))
+      self.postMessage((function () {
+          return 'a';
+        }).apply(null, args))
       return close()
     }
-    self.postMessage((function () {return 'a';})())
+    self.postMessage((function () {
+          return 'a';
+        })())
     return close()
   }
 `
