@@ -61,18 +61,17 @@ const argumentError = ({ expected = '', received, extraInfo = '' }) => {
 // Response builder
 const makeResponse = work => `
   self.onmessage = function(event) {
-    const args = event.data.message.args
+    const args = event.data.message.args;
+    let appliedWorkPromise;
     if (args) {
-      return Promise.resolve((${work}).apply(null, args))
-        .then(result => { self.postMessage(result) })
-        .then(() => close())
-        .catch(err => setTimeout(() => { throw err; }))
+      appliedWorkPromise = Promise.resolve((${work}).apply(null, args));
+    } else {
+      appliedWorkPromise = Promise.resolve((${work})());
     }
-    return Promise
-      .resolve((${work})())
-      .then(result => { self.postMessage(result) })
-      .then(() => close())
-      .catch(err => setTimeout(() => { throw err; }))
+    return appliedWorkPromise.then(function(result) {
+      self.postMessage(result);
+      return close();
+    });
   }
 `
 

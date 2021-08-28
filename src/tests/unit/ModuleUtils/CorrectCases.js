@@ -7,18 +7,17 @@ export default (utilsModule) => {
         const actual = utilsModule.makeResponse(() => 'a')
         const expected = `
   self.onmessage = function(event) {
-    const args = event.data.message.args
+    const args = event.data.message.args;
+    let appliedWorkPromise;
     if (args) {
-      return Promise.resolve((function () {return 'a';}).apply(null, args))
-        .then(result => { self.postMessage(result) })
-        .then(() => close())
-        .catch(err => setTimeout(() => { throw err; }))
+      appliedWorkPromise = Promise.resolve((function () {return 'a';}).apply(null, args));
+    } else {
+      appliedWorkPromise = Promise.resolve((function () {return 'a';})());
     }
-    return Promise
-      .resolve((function () {return 'a';})())
-      .then(result => { self.postMessage(result) })
-      .then(() => close())
-      .catch(err => setTimeout(() => { throw err; }))
+    return appliedWorkPromise.then(function(result) {
+      self.postMessage(result);
+      return close();
+    });
   }
 `.trim()
         expect(actual.trim()).toBe(expected)
@@ -28,18 +27,17 @@ export default (utilsModule) => {
         const actual = utilsModule.makeResponse(function () { return 'a' })
         const expected = `
   self.onmessage = function(event) {
-    const args = event.data.message.args
+    const args = event.data.message.args;
+    let appliedWorkPromise;
     if (args) {
-      return Promise.resolve((function () {return 'a';}).apply(null, args))
-        .then(result => { self.postMessage(result) })
-        .then(() => close())
-        .catch(err => setTimeout(() => { throw err; }))
+      appliedWorkPromise = Promise.resolve((function () {return 'a';}).apply(null, args));
+    } else {
+      appliedWorkPromise = Promise.resolve((function () {return 'a';})());
     }
-    return Promise
-      .resolve((function () {return 'a';})())
-      .then(result => { self.postMessage(result) })
-      .then(() => close())
-      .catch(err => setTimeout(() => { throw err; }))
+    return appliedWorkPromise.then(function(result) {
+      self.postMessage(result);
+      return close();
+    });
   }
 `.trim()
         expect(actual.trim()).toBe(expected)
