@@ -3,10 +3,6 @@
 
 ## Changelog
 
-### **1.2.1**
-* Added support for promises as input functions
-  * TODO: more extensive testing needed, but all 34 integration tests and 242 unit tests pass at time of writing
-
 ### **1.2.0**
 
 #### _Highlights:_
@@ -57,6 +53,15 @@ SWorker.run(() => 'SWorker run 1: Function in other thread')
 SWorker.run((arg1, arg2) => `SWorker run 2: ${arg1} ${arg2}`, ['Another', 'function in other thread'])
     .then(console.log) // logs 'SWorker run 2: Another function in other thread'
     .catch(console.error) // logs any possible error
+
+// Any function that returns a promise (e.g. fetch) works
+SWorker.run((arg1, arg2) => new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve(`SWorker run 3: ${arg1} ${arg2}`);
+  }, 100);
+}), ['Another', 'function in other thread after 100ms'])
+    .then(console.log) // logs 'SWorker run 3: Another function in other thread after 100ms'
+    .catch(console.error) // logs any possible error
 ```
 
 ### SWorker.create(_[actions]?_)
@@ -74,7 +79,8 @@ const actions = [
   { message: 'func1', func: () => `Worker 1: Working on func1` },
   { message: 'func2', func: arg => `Worker 2: ${arg}` },
   { message: 'func3', func: arg => `Worker 3: ${arg}` },
-  { message: 'func4', func: (arg = 'Working on func4') => `Worker 4: ${arg}` }
+  { message: 'func4', func: (arg = 'Working on func4') => `Worker 4: ${arg}` },
+  { message: 'func5', func: (arg = 500) => new Promise((resolve, reject) => { setTimeout(() => resolve(`Worker 5: ${arg}ms delay`), arg) }) }
 ]
 
 let worker = SWorker.create(actions)
@@ -99,7 +105,8 @@ const actions = [
   { message: 'func1', func: () => `Worker 1: Working on func1` },
   { message: 'func2', func: arg => `Worker 2: ${arg}` },
   { message: 'func3', func: arg => `Worker 3: ${arg}` },
-  { message: 'func4', func: (arg = 'Working on func4') => `Worker 4: ${arg}` }
+  { message: 'func4', func: (arg = 'Working on func4') => `Worker 4: ${arg}` },
+  { message: 'func5', func: (arg = 500) => new Promise((resolve, reject) => { setTimeout(() => resolve(`Worker 5: ${arg}ms delay`), arg) }) }
 ]
 
 let worker = SWorker.create(actions)
@@ -127,6 +134,14 @@ worker.postMessage('func4')
 worker.postMessage('func4', ['Overwrited argument'])
   .then(console.log) // logs 'Worker 4: Overwrited argument'
   .catch(console.error) // logs any possible error
+
+worker.postMessage('func5')
+  .then(console.log) // logs 'Worker 5: 500ms delay'
+  .catch(console.error) // logs any possible error
+
+worker.postMessage('func5', [1000])
+  .then(console.log) // logs 'Worker 5: 1000ms delay'
+  .catch(console.error) // logs any possible error
 ```
 
 ### <worker\>.postAll(_[message1,... || {message: message1, args: [args1]},... || [args1],...]?_)
@@ -153,13 +168,14 @@ const actions = [
   { message: 'func1', func: () => `Worker 1: Working on func1` },
   { message: 'func2', func: arg => `Worker 2: ${arg}` },
   { message: 'func3', func: arg => `Worker 3: ${arg}` },
-  { message: 'func4', func: (arg = 'Working on func4') => `Worker 4: ${arg}` }
+  { message: 'func4', func: (arg = 'Working on func4') => `Worker 4: ${arg}` },
+  { message: 'func5', func: (arg = 500) => new Promise((resolve, reject) => { setTimeout(() => resolve(`Worker 5: ${arg}ms delay`), arg) }) }
 ]
 
 let worker = SWorker.create(actions)
 
 worker.postAll()
-  .then(console.log) // logs ['Worker 1: Working on func1', 'Worker 2: undefined', 'Worker 3: undefined', 'Worker 4: Working on func4']
+  .then(console.log) // logs ['Worker 1: Working on func1', 'Worker 2: undefined', 'Worker 3: undefined', 'Worker 4: Working on func4', 'Worker 5: 50ms delay']
   .catch(console.error) // logs any possible error
 
 worker.postAll(['func1', 'func3'])

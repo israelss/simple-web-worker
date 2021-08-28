@@ -1,5 +1,7 @@
 # Changelog
 
+## Unreleased
+* Add support for input functions returning Promises.
 ## **1.2.0**
 
 * Added tests
