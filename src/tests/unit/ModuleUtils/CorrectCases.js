@@ -6,7 +6,7 @@ export default (utilsModule) => {
       test('with an arrow function', () => {
         const actual = utilsModule.makeResponse(() => 'a')
         const expected = `
-  self.onmessage = event => {
+  self.onmessage = function(event) {
     const args = event.data.message.args
     if (args) {
       return Promise.resolve((function () {return 'a';}).apply(null, args))
@@ -27,7 +27,7 @@ export default (utilsModule) => {
       test('with a function expression', () => {
         const actual = utilsModule.makeResponse(function () { return 'a' })
         const expected = `
-  self.onmessage = event => {
+  self.onmessage = function(event) {
     const args = event.data.message.args
     if (args) {
       return Promise.resolve((function () {return 'a';}).apply(null, args))
