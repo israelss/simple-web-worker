@@ -7,32 +7,40 @@ export default (utilsModule) => {
         const actual = utilsModule.makeResponse(() => 'a')
         const expected = `
   self.onmessage = function(event) {
-    const args = event.data.message.args
+    const args = event.data.message.args;
+    let appliedWorkPromise;
     if (args) {
-      self.postMessage((function () {return 'a';}).apply(null, args))
-      return close()
+      appliedWorkPromise = Promise.resolve((function () {return 'a';}).apply(null, args));
+    } else {
+      appliedWorkPromise = Promise.resolve((function () {return 'a';})());
     }
-    self.postMessage((function () {return 'a';})())
-    return close()
+    return appliedWorkPromise.then(function(result) {
+      self.postMessage(result);
+      return close();
+    });
   }
-`
-        expect(actual).toBe(expected)
+`.trim()
+        expect(actual.trim()).toBe(expected)
       })
 
       test('with a function expression', () => {
         const actual = utilsModule.makeResponse(function () { return 'a' })
         const expected = `
   self.onmessage = function(event) {
-    const args = event.data.message.args
+    const args = event.data.message.args;
+    let appliedWorkPromise;
     if (args) {
-      self.postMessage((function () {return 'a';}).apply(null, args))
-      return close()
+      appliedWorkPromise = Promise.resolve((function () {return 'a';}).apply(null, args));
+    } else {
+      appliedWorkPromise = Promise.resolve((function () {return 'a';})());
     }
-    self.postMessage((function () {return 'a';})())
-    return close()
+    return appliedWorkPromise.then(function(result) {
+      self.postMessage(result);
+      return close();
+    });
   }
-`
-        expect(actual).toBe(expected)
+`.trim()
+        expect(actual.trim()).toBe(expected)
       })
     })
 

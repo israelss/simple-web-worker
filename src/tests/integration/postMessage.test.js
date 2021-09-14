@@ -66,3 +66,12 @@ test('A message that points to a non existent function', async t => {
   await t.expect(testResult).eql(expected)
   await t.expect(testParagraph).eql(expected)
 })
+
+test('With args when does expect args (promise version)', async t => {
+  const testResult = await ClientFunction(() => postMessageTests.t8())()
+  const expected = 'a'
+  const testParagraph = Selector('#result').textContent
+  await t.expect(testResult).typeOf('string')
+  await t.expect(testResult).eql(expected)
+  await t.expect(testParagraph).eql(expected)
+})

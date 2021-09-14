@@ -18,6 +18,11 @@ export default (post, actions, externalModule) => {
           expect.assertions(1)
           return expect(post('func4')).resolves.toBe('Worker 4: Working on func4')
         })
+
+        test('have default args (promise version)', () => {
+          expect.assertions(1)
+          return expect(post('func5')).resolves.toBe('Worker 5: Asynchronous work on func 5')
+        })
       })
 
       describe('with args when', () => {
@@ -34,6 +39,11 @@ export default (post, actions, externalModule) => {
         test('have default args', () => {
           expect.assertions(1)
           return expect(post('func4', ['Overwrited argument'])).resolves.toBe('Worker 4: Overwrited argument')
+        })
+
+        test('have default args (promise version)', () => {
+          expect.assertions(1)
+          return expect(post('func5', ['Overwrited argument 2'])).resolves.toBe('Worker 5: Overwrited argument 2')
         })
       })
     })

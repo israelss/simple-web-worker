@@ -51,7 +51,7 @@ const argumentError = ({ expected = '', received, extraInfo = '' }) => {
   try {
     return new TypeError(`${'You should provide ' + expected}${'\n' + extraInfo}${'\nReceived: ' + JSON.stringify(received)}`)
   } catch (err) {
-    if (err.message === 'Converting circular structure to JSON') {
+    if (err.message.indexOf('Converting circular structure to JSON') > -1) {
       return new TypeError(`${'You should provide ' + expected}${'\n' + extraInfo}${'\nReceived a circular structure: ' + received}`)
     }
     throw err
@@ -61,13 +61,17 @@ const argumentError = ({ expected = '', received, extraInfo = '' }) => {
 // Response builder
 const makeResponse = work => `
   self.onmessage = function(event) {
-    const args = event.data.message.args
+    const args = event.data.message.args;
+    let appliedWorkPromise;
     if (args) {
-      self.postMessage((${work}).apply(null, args))
-      return close()
+      appliedWorkPromise = Promise.resolve((${work}).apply(null, args));
+    } else {
+      appliedWorkPromise = Promise.resolve((${work})());
     }
-    self.postMessage((${work})())
-    return close()
+    return appliedWorkPromise.then(function(result) {
+      self.postMessage(result);
+      return close();
+    });
   }
 `
 

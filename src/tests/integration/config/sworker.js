@@ -98,7 +98,7 @@ var argumentError = function argumentError(_ref) {
   try {
     return new TypeError('' + ('You should provide ' + expected) + ('\n' + extraInfo) + ('\nReceived: ' + JSON.stringify(received)));
   } catch (err) {
-    if (err.message === 'Converting circular structure to JSON') {
+    if (err.message.indexOf('Converting circular structure to JSON') > -1) {
       return new TypeError('' + ('You should provide ' + expected) + ('\n' + extraInfo) + ('\nReceived a circular structure: ' + received));
     }
     throw err;
@@ -107,7 +107,7 @@ var argumentError = function argumentError(_ref) {
 
 // Response builder
 var makeResponse = function makeResponse(work) {
-  return '\n  self.onmessage = event => {\n    const args = event.data.message.args\n    if (args) {\n      self.postMessage((' + work + ').apply(null, args))\n      return close()\n    }\n    self.postMessage((' + work + ')())\n    return close()\n  }\n';
+  return '\n  self.onmessage = function(event) {\n    const args = event.data.message.args;\n    let appliedWorkPromise;\n    if (args) {\n      appliedWorkPromise = Promise.resolve((' + work + ').apply(null, args));\n    } else {\n      appliedWorkPromise = Promise.resolve((' + work + ')());\n    }\n    return appliedWorkPromise.then(function(result) {\n      self.postMessage(result);\n      return close();\n    });\n  }\n';
 };
 
 var createDisposableWorker = function createDisposableWorker(response) {

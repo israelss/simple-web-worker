@@ -4,7 +4,7 @@ export default (worker) => {
   describe('postAll - Correct use cases.\n  PostAll:', () => {
     describe('Returns correctly when called', () => {
       test('without args and without message', () => {
-        return expect(worker.postAll()).resolves.toEqual(['a', 'b', undefined, 'default'])
+        return expect(worker.postAll()).resolves.toEqual(['a', 'b', undefined, 'default', 'Asynchronous'])
       })
 
       test('with one message (array of strings)', () => {
@@ -28,22 +28,22 @@ export default (worker) => {
       })
 
       test('with an array of arrays (null in every array)', () => {
-        return expect(worker.postAll([[null], [null], [null], [null]]))
-          .resolves.toEqual(['a', 'b', null, null])
+        return expect(worker.postAll([[null], [null], [null], [null], [null]]))
+          .resolves.toEqual(['a', 'b', null, null, null])
       })
 
       test('with an array of arrays (overwriting a default value)', () => {
         const messages = [
-          [], ['ignored', 'args'], ['something'], ['overwrited']
+          [], ['ignored', 'args'], ['something'], ['overwrited'], ['overwrited 2']
         ]
         return expect(worker.postAll(messages))
-          .resolves.toEqual(['a', 'b', 'something', 'overwrited'])
+          .resolves.toEqual(['a', 'b', 'something', 'overwrited', 'overwrited 2'])
       })
 
       test('with an array of arrays (relying on a default value)', () => {
-        const messages = [[], ['ignored', 'args'], ['something'], []]
+        const messages = [[], ['ignored', 'args'], ['something'], [], []]
         return expect(worker.postAll(messages))
-          .resolves.toEqual(['a', 'b', 'something', 'default'])
+          .resolves.toEqual(['a', 'b', 'something', 'default', 'Asynchronous'])
       })
     })
   })
