@@ -1,3 +1,4 @@
+const CLOSE_WORKER = '__CLOSE_WORKER__';
 // Argument validation
 const isValidObjectWith = fields => obj =>
   !!obj && !Array.isArray(obj) && fields.every(field => Object.getOwnPropertyNames(obj).includes(field))
@@ -71,8 +72,30 @@ const makeResponse = work => `
   }
 `
 
+const makeManualCloseResponse = work => `
+self.onmessage = async function(event) {
+  if(event.data.message === '${CLOSE_WORKER}'){
+    return close()
+  }
+
+  const args = event.data.message.args
+  
+  if (args) {
+    const msg = await (${work}).apply(null, args)
+    self.postMessage(msg)
+  }
+  const msg = await (${work})()
+  self.postMessage(msg)
+}
+`
+
+const isAsyncFunc = (func) => Object.prototype.toString.call(func) === "[object AsyncFunction]"
+
 export {
   makeResponse,
+  isAsyncFunc,
+  makeManualCloseResponse,
   argumentError,
-  isValid
+  isValid,
+  CLOSE_WORKER
 }
