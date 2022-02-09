@@ -155,7 +155,7 @@ var run = function run() {
   var validWork = isValid(work)('function');
   var validArgs = isValid(args)(['array', 'undefined']);
   if (validWork && validArgs) {
-    var worker = isAsyncFunc(work) ? createDisposableWorker(makeManualCloseResponse(work), isAsyncFunc) : createDisposableWorker(makeResponse(work));
+    var worker = isAsyncFunc(work) ? createDisposableWorker(makeManualCloseResponse(work), true) : createDisposableWorker(makeResponse(work));
     return worker.post({ args: args });
   }
   if (!validWork) console.error(argumentError({ expected: 'a function', received: work }));
