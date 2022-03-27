@@ -1,12 +1,12 @@
-/* global describe, test, expect, jest */
+import { test, describe, expect, jest } from '@jest/globals'
 
-export default (post, actions, externalModule) => {
+export default (post, externalModule) => {
   describe('post - Wrong use cases.\n  Post:', () => {
     describe('Doesn\'t calls run', () => {
       describe('when message', () => {
         test('is an object', () => {
           const spy = console.error = jest.fn()
-          post({f: 'func1'})
+          post({ f: 'func1' })
           expect(externalModule.run).not.toHaveBeenCalled()
           return spy.mockRestore()
         })
@@ -42,7 +42,7 @@ export default (post, actions, externalModule) => {
       describe('when args', () => {
         test('is an object', () => {
           const spy = console.error = jest.fn()
-          post('func1', {arg: 'arg1'})
+          post('func1', { arg: 'arg1' })
           expect(externalModule.run).not.toHaveBeenCalled()
           return spy.mockRestore()
         })
@@ -93,7 +93,7 @@ export default (post, actions, externalModule) => {
         test('is an object', () => {
           const error = new TypeError('You should provide a string\n\nReceived: {"f":"func1"}')
           const spy = console.error = jest.fn()
-          post({f: 'func1'})
+          post({ f: 'func1' })
           expect(spy).toHaveBeenCalledWith(error)
           expect(spy).toHaveBeenCalledTimes(1)
           return spy.mockRestore()
@@ -135,7 +135,7 @@ export default (post, actions, externalModule) => {
         test('is an object', () => {
           const error = new TypeError('You should provide an array\n\nReceived: {"arg":"arg1"}')
           const spy = console.error = jest.fn()
-          post('func1', {arg: 'arg1'})
+          post('func1', { arg: 'arg1' })
           expect(spy).toHaveBeenCalledWith(error)
           expect(spy).toHaveBeenCalledTimes(1)
           return spy.mockRestore()
@@ -169,14 +169,14 @@ export default (post, actions, externalModule) => {
 
     describe('Returns null', () => {
       describe('when message', () => {
-        test('is an object', () => expect(post({f: 'func1'})).toBeNull())
+        test('is an object', () => expect(post({ f: 'func1' })).toBeNull())
         test('is an array', () => expect(post(['func1'])).toBeNull())
         test('is a number', () => expect(post(1)).toBeNull())
         test('is null', () => expect(post(null)).toBeNull())
         test('is undefined', () => expect(post()).toBeNull())
       })
       describe('when args', () => {
-        test('is an object', () => expect(post('func1', {arg: 'arg1'})).toBeNull())
+        test('is an object', () => expect(post('func1', { arg: 'arg1' })).toBeNull())
         test('is a string', () => expect(post('func1', 'arg1')).toBeNull())
         test('is a number', () => expect(post('func1', 1)).toBeNull())
         test('is null', () => expect(post('func1', null)).toBeNull())

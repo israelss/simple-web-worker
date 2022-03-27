@@ -1,6 +1,6 @@
-/* global describe, test, expect */
+import { test, describe, expect } from '@jest/globals'
 
-export default (post, actions, externalModule) => {
+export default (post, externalModule) => {
   describe('post - Correct use cases.\n  Post:', () => {
     describe('Returns correctly', () => {
       describe('without args when', () => {

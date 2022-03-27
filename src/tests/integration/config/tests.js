@@ -195,7 +195,7 @@ const registerTests = {
 
 const postMessageTests = {
   t1 () {
-    const worker = WorkerWrapper.create([{message: 'a', func: () => 'a'}])
+    const worker = WorkerWrapper.create([{ message: 'a', func: () => 'a' }])
     return worker.postMessage('a')
       .then(result => {
         resultEl.innerHTML = result
@@ -205,7 +205,7 @@ const postMessageTests = {
   },
 
   t2 () {
-    const worker = WorkerWrapper.create([{message: 'a', func: (arg) => `${arg}`}])
+    const worker = WorkerWrapper.create([{ message: 'a', func: (arg) => `${arg}` }])
     return worker.postMessage('a')
       .then(result => {
         resultEl.innerHTML = result
@@ -230,7 +230,7 @@ const postMessageTests = {
   },
 
   t4 () {
-    const worker = WorkerWrapper.create([{message: 'a', func: () => 'a'}])
+    const worker = WorkerWrapper.create([{ message: 'a', func: () => 'a' }])
     return worker.postMessage('a', ['Ignored', 'arguments'])
       .then(result => {
         resultEl.innerHTML = result
@@ -240,7 +240,7 @@ const postMessageTests = {
   },
 
   t5 () {
-    const worker = WorkerWrapper.create([{message: 'a', func: (arg) => `${arg}`}])
+    const worker = WorkerWrapper.create([{ message: 'a', func: (arg) => `${arg}` }])
     return worker.postMessage('a', ['a'])
       .then(result => {
         resultEl.innerHTML = result
@@ -265,7 +265,7 @@ const postMessageTests = {
   },
 
   t7 () {
-    const worker = WorkerWrapper.create([{message: 'a', func: () => 'a'}])
+    const worker = WorkerWrapper.create([{ message: 'a', func: () => 'a' }])
     return worker.postMessage('Darth Vader')
       .then(result => {
         resultEl.innerHTML = result

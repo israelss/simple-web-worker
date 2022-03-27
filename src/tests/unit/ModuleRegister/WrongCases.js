@@ -1,4 +1,4 @@
-/* global test, describe, expect, jest */
+import { test, describe, expect, jest } from '@jest/globals'
 
 export default (register) => {
   describe('register - Wrong use cases\n  Register:', () => {
@@ -9,7 +9,7 @@ export default (register) => {
           const spy = console.warn = jest.fn()
           const registerMock = register([{ message: 'a', func: () => 'a' }])
           registerMock({ message: 'a', func: () => 'a' })
-          expect(spy).toHaveBeenCalledWith(warn(`a`))
+          expect(spy).toHaveBeenCalledWith(warn('a'))
           expect(spy).toHaveBeenCalledTimes(1)
           return spy.mockRestore()
         })
@@ -24,8 +24,8 @@ export default (register) => {
             { message: 'a', func: () => 'c' },
             { message: 'b', func: () => 'b' }
           ])
-          expect(spy).toHaveBeenCalledWith(warn(`a`))
-          expect(spy).toHaveBeenCalledWith(warn(`b`))
+          expect(spy).toHaveBeenCalledWith(warn('a'))
+          expect(spy).toHaveBeenCalledWith(warn('b'))
           expect(spy).toHaveBeenCalledTimes(2)
           return spy.mockRestore()
         })
@@ -42,8 +42,8 @@ export default (register) => {
             { message: 'b', func: () => 'b' },
             { message: 'c', func: () => 'c' }
           ])
-          expect(spy).toHaveBeenCalledWith(warn(`a`))
-          expect(spy).toHaveBeenCalledWith(warn(`b`))
+          expect(spy).toHaveBeenCalledWith(warn('a'))
+          expect(spy).toHaveBeenCalledWith(warn('b'))
           expect(spy).toHaveBeenCalledTimes(2)
           return spy.mockRestore()
         })
@@ -111,7 +111,7 @@ Received: ${received}`)
       })
       test('action is an object with wrong fields', () => {
         const spy = console.error = jest.fn()
-        register([])({action: 'object'})
+        register([])({ action: 'object' })
         expect(spy).toHaveBeenCalledWith(error('{"action":"object"}'))
         expect(spy).toHaveBeenCalledTimes(1)
         return spy.mockRestore()
@@ -135,7 +135,7 @@ Received: ${received}`)
     describe('Returns null when', () => {
       test('action is a string', () => expect(register([])('string')).toBeNull())
       test('action is an array', () => expect(register([])(['array'])).toBeNull())
-      test('action is an object with wrong fields', () => expect(register([])({action: 'object'})).toBeNull())
+      test('action is an object with wrong fields', () => expect(register([])({ action: 'object' })).toBeNull())
       test('action is undefined', () => expect(register([])()).toBeNull())
       test('action is null', () => expect(register([])(null)).toBeNull())
     })

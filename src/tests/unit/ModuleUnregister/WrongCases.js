@@ -1,4 +1,4 @@
-/* global test, describe, expect, jest */
+import { jest, test, describe, expect } from '@jest/globals'
 
 export default (unregister) => {
   describe('unregister - Wrong use cases\n  Unregister:', () => {
@@ -80,7 +80,7 @@ export default (unregister) => {
 
       test('an object', () => {
         const spy = console.error = jest.fn()
-        unregister([{ message: 'a', func: () => 'a' }])({an: 'object'})
+        unregister([{ message: 'a', func: () => 'a' }])({ an: 'object' })
         expect(spy).toHaveBeenCalledWith(error('{"an":"object"}'))
         expect(spy).toHaveBeenCalledTimes(1)
         return spy.mockRestore()
@@ -112,16 +112,15 @@ export default (unregister) => {
 
       test('an array with something beside strings', () => {
         const spy = console.error = jest.fn()
-        unregister([{ message: 'a', func: () => 'a' }])(['an', 'array', {with: 'object'}])
+        unregister([{ message: 'a', func: () => 'a' }])(['an', 'array', { with: 'object' }])
         expect(spy).toHaveBeenCalledWith(error('["an","array",{"with":"object"}]'))
         expect(spy).toHaveBeenCalledTimes(1)
         return spy.mockRestore()
       })
-
     })
 
     describe('Returns null when message is', () => {
-      test('an object', () => expect(unregister([])({an: 'object'})).toBeNull())
+      test('an object', () => expect(unregister([])({ an: 'object' })).toBeNull())
 
       test('a number', () => expect(unregister([])(1)).toBeNull())
 
@@ -129,7 +128,7 @@ export default (unregister) => {
 
       test('null', () => expect(unregister([])(null)).toBeNull())
 
-      test('an array with something beside strings', () => expect(unregister([])(['an', 'array', {with: 'object'}])).toBeNull())
+      test('an array with something beside strings', () => expect(unregister([])(['an', 'array', { with: 'object' }])).toBeNull())
     })
   })
 }

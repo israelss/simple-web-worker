@@ -1,8 +1,8 @@
 /* global fixture, test, unregisterTests */
 import { ClientFunction, Selector } from 'testcafe'
 
-fixture(`<worker>.unregister`)
-  .page(`./config/index.html`)
+fixture('<worker>.unregister')
+  .page('./config/index.html')
 
 test('A single action', async t => {
   const testResult = await ClientFunction(() => unregisterTests.t1())()

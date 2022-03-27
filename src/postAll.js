@@ -1,4 +1,3 @@
-// import { invalidObjectsArray, isArrayOf, notArray, returnNull, wrongLength, wrongObjects } from './utils'
 import { isValid, argumentError } from './utils'
 
 const makeOptionsFor = arr => {

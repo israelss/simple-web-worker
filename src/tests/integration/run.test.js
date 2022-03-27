@@ -1,8 +1,8 @@
 /* global fixture, test, runTests */
 import { ClientFunction, Selector } from 'testcafe'
 
-fixture(`SWorker.run`)
-  .page(`./config/index.html`)
+fixture('SWorker.run')
+  .page('./config/index.html')
 
 test('Without args && without =>', async t => {
   const workerResult = await ClientFunction(() => runTests.t1())()

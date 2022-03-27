@@ -1,6 +1,6 @@
 // Argument validation
 const isValidObjectWith = fields => obj =>
-  !!obj && !Array.isArray(obj) && fields.every(field => obj.hasOwnProperty(field))
+  !!obj && !Array.isArray(obj) && fields.every(field => Object.getOwnPropertyNames(obj).includes(field))
 
 const isValidAction = obj => {
   return isValidObjectWith(['message', 'func'])(obj) &&
@@ -20,11 +20,11 @@ const isValidObjectsArray = arr => (fields = []) =>
   arr.every(isValidObjectWith(fields))
 
 const testArray = {
-  'actionsArray': arr => isValidActionsArray(arr),
-  'arraysArray': arr => arr.every(item => Array.isArray(item)),
-  'objectsArray': arr => isValidObjectsArray(arr)(),
-  'postParamsArray': arr => isValidPostParamsArray(arr),
-  'stringsArray': arr => arr.every(item => typeof item === 'string')
+  actionsArray: arr => isValidActionsArray(arr),
+  arraysArray: arr => arr.every(item => Array.isArray(item)),
+  objectsArray: arr => isValidObjectsArray(arr)(),
+  postParamsArray: arr => isValidPostParamsArray(arr),
+  stringsArray: arr => arr.every(item => typeof item === 'string')
 }
 
 const isValidArg = arg => type => {
@@ -36,7 +36,7 @@ const isValidArg = arg => type => {
     if (type === 'array') return true
     return testArray[type](arg)
   }
-  if (arg) return typeof arg === type.toString() // eslint-disable-line
+  if (arg) return typeof arg === type.toString(); // eslint-disable-line
   return false
 }
 
@@ -51,7 +51,7 @@ const argumentError = ({ expected = '', received, extraInfo = '' }) => {
   try {
     return new TypeError(`${'You should provide ' + expected}${'\n' + extraInfo}${'\nReceived: ' + JSON.stringify(received)}`)
   } catch (err) {
-    if (err.message === 'Converting circular structure to JSON') {
+    if (err.message.includes('Converting circular structure to JSON')) {
       return new TypeError(`${'You should provide ' + expected}${'\n' + extraInfo}${'\nReceived a circular structure: ' + received}`)
     }
     throw err

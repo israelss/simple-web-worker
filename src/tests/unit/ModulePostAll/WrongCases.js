@@ -1,4 +1,4 @@
-/* global describe, test, jest, expect */
+import { describe, test, expect, jest } from '@jest/globals'
 
 const buildError = received =>
   new TypeError(`You should provide an array of arrays, an array of objects, or an array of strings
@@ -30,9 +30,9 @@ export default (worker) => {
       })
 
       test('an object', () => {
-        const error = buildError({an: 'object'})
+        const error = buildError({ an: 'object' })
         const spy = console.error = jest.fn()
-        worker.postAll({an: 'object'})
+        worker.postAll({ an: 'object' })
         expect(spy).toHaveBeenCalledWith(error)
         expect(spy).toHaveBeenCalledTimes(1)
         return spy.mockRestore()
@@ -137,7 +137,7 @@ export default (worker) => {
 
       test('a string', () => expect(worker.postAll('a string')).toBeNull())
 
-      test('an object', () => expect(worker.postAll({an: 'object'})).toBeNull())
+      test('an object', () => expect(worker.postAll({ an: 'object' })).toBeNull())
 
       test('a number', () => expect(worker.postAll(1)).toBeNull())
 

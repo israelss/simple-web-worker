@@ -9,8 +9,8 @@ const JSONreplacer = (key, value) => {
 
 const stringify = (msg, replacer = JSONreplacer) => JSON.stringify(msg, replacer)
 
-fixture(`<worker>.postAll`)
-  .page(`./config/index.html`)
+fixture('<worker>.postAll')
+  .page('./config/index.html')
 
 test('Without args, without message', async t => {
   const testResult = await ClientFunction(() => postAllTests.t1())()
@@ -30,7 +30,6 @@ test('One message (array of strings)', async t => {
   await t.expect(testParagraph).eql(expected)
 })
 
-
 test('More than one message (array of strings)', async t => {
   const testResult = await ClientFunction(() => postAllTests.t3())()
   const expected = stringify(['a', 'b'])
@@ -48,7 +47,6 @@ test('One message (array of objects)', async t => {
   await t.expect(stringify(testResult)).eql(expected)
   await t.expect(testParagraph).eql(expected)
 })
-
 
 test('More than one message (array of objects)', async t => {
   const testResult = await ClientFunction(() => postAllTests.t5())()
