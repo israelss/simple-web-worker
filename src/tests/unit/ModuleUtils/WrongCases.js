@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+import { test, describe, expect } from '@jest/globals'
 
 export default (utilsModule) => {
   describe('utils - Wrong use cases.\n  Utils:', () => {
@@ -19,7 +19,7 @@ export default (utilsModule) => {
       })
 
       test('number', () => {
-        const actual = utilsModule.isValid({an: 'object'})('number')
+        const actual = utilsModule.isValid({ an: 'object' })('number')
         expect(actual).toBe(false)
       })
 
@@ -39,29 +39,29 @@ export default (utilsModule) => {
       })
 
       test('action', () => {
-        const actual1 = utilsModule.isValid({message: 'a', b: () => 'a'})('action')
+        const actual1 = utilsModule.isValid({ message: 'a', b: () => 'a' })('action')
         expect(actual1).toBe(false)
-        const actual2 = utilsModule.isValid({a: 'a', func: () => 'a'})('action')
+        const actual2 = utilsModule.isValid({ a: 'a', func: () => 'a' })('action')
         expect(actual2).toBe(false)
-        const actual3 = utilsModule.isValid({a: 'a', b: () => 'a'})('action')
+        const actual3 = utilsModule.isValid({ a: 'a', b: () => 'a' })('action')
         expect(actual3).toBe(false)
-        const actual4 = utilsModule.isValid({message: 'a', func: 'a'})('action')
+        const actual4 = utilsModule.isValid({ message: 'a', func: 'a' })('action')
         expect(actual4).toBe(false)
-        const actual5 = utilsModule.isValid({message: ['a'], func: () => 'a'})('action')
+        const actual5 = utilsModule.isValid({ message: ['a'], func: () => 'a' })('action')
         expect(actual5).toBe(false)
       })
 
       test('actionsArray', () => {
         const actions = [
           ['a'],
-          {message: 'b', func: () => 'b'}
+          { message: 'b', func: () => 'b' }
         ]
         const actual = utilsModule.isValid(actions)('actionsArray')
         expect(actual).toBe(false)
       })
 
       test('arraysArray', () => {
-        const arrays = [['a'], {message: 'b', func: () => 'b'}]
+        const arrays = [['a'], { message: 'b', func: () => 'b' }]
         const actual = utilsModule.isValid(arrays)('arraysArray')
         expect(actual).toBe(false)
       })
@@ -69,7 +69,7 @@ export default (utilsModule) => {
       test('objectsArray', () => {
         const objects = [
           ['a'],
-          {func: () => 'b'}
+          { func: () => 'b' }
         ]
         const actual = utilsModule.isValid(objects)('objectsArray')
         expect(actual).toBe(false)
@@ -77,8 +77,8 @@ export default (utilsModule) => {
 
       test('postParamsArray', () => {
         const postParams = [
-          {message: 'a', args: ['a']},
-          {message: 'b', args: 'b'}
+          { message: 'a', args: ['a'] },
+          { message: 'b', args: 'b' }
         ]
         const actual = utilsModule.isValid(postParams)('postParamsArray')
         expect(actual).toBe(false)

@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+import { describe, test, expect } from '@jest/globals'
 
 export default (worker) => {
   describe('postAll - Correct use cases.\n  PostAll:', () => {

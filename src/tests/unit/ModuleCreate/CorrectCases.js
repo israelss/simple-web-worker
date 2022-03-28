@@ -1,10 +1,10 @@
-/* global describe, test, expect */
+import { test, describe, expect } from '@jest/globals'
 
 export default (create) => {
   describe('create - Correct use cases.\n  Create:', () => {
     describe('Returns an object when the argument is', () => {
       test('unexistent or undefined', () => expect(create()).toBeInstanceOf(Object))
-      test('an array of actions', () => expect(create([{message: 'func1', func: () => 'Work 1'}])).toBeInstanceOf(Object))
+      test('an array of actions', () => expect(create([{ message: 'func1', func: () => 'Work 1' }])).toBeInstanceOf(Object))
     })
     describe('Has all properties when the argument is', () => {
       describe('unexistent or undefined:', () => {
@@ -37,7 +37,7 @@ export default (create) => {
       })
 
       describe('an array of actions', () => {
-        const actual = create([{message: 'func1', func: () => 'Work 1'}])
+        const actual = create([{ message: 'func1', func: () => 'Work 1' }])
         describe('Property actions', () => {
           test('exists', () => expect(actual).toHaveProperty('actions'))
           test('is an array', () => expect(actual.actions).toBeInstanceOf(Array))

@@ -1,4 +1,4 @@
-/* global test, describe, expect */
+import { test, describe, expect } from '@jest/globals'
 
 export default (run, externalModule) => {
   describe('run - Correct use cases\n  Run:', () => {
@@ -16,7 +16,7 @@ export default (run, externalModule) => {
         expect(externalModule.createDisposableWorker).toHaveBeenCalledTimes(1)
       })
       test('expecting a string as return', () => {
-        run(() => `Returned string`)
+        run(() => 'Returned string')
         expect(externalModule.createDisposableWorker).toHaveBeenCalledTimes(1)
       })
       test('expecting a number as return', () => {
@@ -57,7 +57,7 @@ export default (run, externalModule) => {
         })
         test('expecting a string as return', () => {
           const expected = 'Returned string'
-          const actual = run(() => `Returned string`)
+          const actual = run(() => 'Returned string')
           expect.assertions(1)
           return expect(actual).resolves.toBe(expected)
         })

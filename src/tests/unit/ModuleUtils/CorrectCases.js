@@ -1,18 +1,22 @@
-/* global describe, test, expect */
+import { test, describe, expect } from '@jest/globals'
 
 export default (utilsModule) => {
   describe('utils - Correct use cases.\n  Utils:', () => {
     describe('makeResponse', () => {
       test('with an arrow function', () => {
-        const actual = utilsModule.makeResponse(() => 'a')
+        const actual = JSON.parse(JSON.stringify(utilsModule.makeResponse(() => 'a')))
         const expected = `
   self.onmessage = function(event) {
     const args = event.data.message.args
     if (args) {
-      self.postMessage((function () {return 'a';}).apply(null, args))
+      self.postMessage((function () {
+          return 'a';
+        }).apply(null, args))
       return close()
     }
-    self.postMessage((function () {return 'a';})())
+    self.postMessage((function () {
+          return 'a';
+        })())
     return close()
   }
 `
@@ -25,10 +29,14 @@ export default (utilsModule) => {
   self.onmessage = function(event) {
     const args = event.data.message.args
     if (args) {
-      self.postMessage((function () {return 'a';}).apply(null, args))
+      self.postMessage((function () {
+          return 'a';
+        }).apply(null, args))
       return close()
     }
-    self.postMessage((function () {return 'a';})())
+    self.postMessage((function () {
+          return 'a';
+        })())
     return close()
   }
 `
@@ -101,7 +109,7 @@ export default (utilsModule) => {
         })
 
         test('object', () => {
-          const actual = utilsModule.isValid({an: 'object'})('object')
+          const actual = utilsModule.isValid({ an: 'object' })('object')
           expect(actual).toBe(true)
         })
 
@@ -131,14 +139,14 @@ export default (utilsModule) => {
         })
 
         test('action', () => {
-          const actual = utilsModule.isValid({message: 'a', func: () => 'a'})('action')
+          const actual = utilsModule.isValid({ message: 'a', func: () => 'a' })('action')
           expect(actual).toBe(true)
         })
 
         test('actionsArray', () => {
           const actions = [
-            {message: 'a', func: () => 'a'},
-            {message: 'b', func: () => 'b'}
+            { message: 'a', func: () => 'a' },
+            { message: 'b', func: () => 'b' }
           ]
           const actual = utilsModule.isValid(actions)('actionsArray')
           expect(actual).toBe(true)
@@ -152,8 +160,8 @@ export default (utilsModule) => {
 
         test('objectsArray', () => {
           const objects = [
-            {message: 'a'},
-            {func: () => 'b'}
+            { message: 'a' },
+            { func: () => 'b' }
           ]
           const actual = utilsModule.isValid(objects)('objectsArray')
           expect(actual).toBe(true)
@@ -161,8 +169,8 @@ export default (utilsModule) => {
 
         test('postParamsArray', () => {
           const postParams = [
-            {message: 'a', args: ['a']},
-            {message: 'b', args: ['b']}
+            { message: 'a', args: ['a'] },
+            { message: 'b', args: ['b'] }
           ]
           const actual = utilsModule.isValid(postParams)('postParamsArray')
           expect(actual).toBe(true)
@@ -176,7 +184,7 @@ export default (utilsModule) => {
       })
 
       describe('types is an Array', () => {
-        describe(`['array', 'undefined']`, () => {
+        describe('[\'array\', \'undefined\']', () => {
           test('array', () => {
             const actual = utilsModule.isValid([])(['array', 'undefined'])
             expect(actual).toBe(true)
@@ -188,7 +196,7 @@ export default (utilsModule) => {
           })
         })
 
-        describe(`['string', 'stringsArray']`, () => {
+        describe('[\'string\', \'stringsArray\']', () => {
           test('string', () => {
             const actual = utilsModule.isValid('string')(['string', 'stringsArray'])
             expect(actual).toBe(true)
@@ -200,23 +208,23 @@ export default (utilsModule) => {
           })
         })
 
-        describe(`['action', 'actionsArray']`, () => {
+        describe('[\'action\', \'actionsArray\']', () => {
           test('action', () => {
-            const actual = utilsModule.isValid({message: 'a', func: () => 'a'})(['action', 'actionsArray'])
+            const actual = utilsModule.isValid({ message: 'a', func: () => 'a' })(['action', 'actionsArray'])
             expect(actual).toBe(true)
           })
 
           test('actionsArray', () => {
             const actions = [
-              {message: 'a', func: () => 'a'},
-              {message: 'b', func: () => 'b'}
+              { message: 'a', func: () => 'a' },
+              { message: 'b', func: () => 'b' }
             ]
             const actual = utilsModule.isValid(actions)(['action', 'actionsArray'])
             expect(actual).toBe(true)
           })
         })
 
-        describe(`['arraysArray', 'postParamsArray', 'stringsArray']`, () => {
+        describe('[\'arraysArray\', \'postParamsArray\', \'stringsArray\']', () => {
           test('arraysArray', () => {
             const arrays = [['a'], ['b']]
             const actual = utilsModule.isValid(arrays)(['arraysArray', 'postParamsArray', 'stringsArray'])
@@ -225,8 +233,8 @@ export default (utilsModule) => {
 
           test('postParamsArray', () => {
             const postParams = [
-              {message: 'a', args: ['a']},
-              {message: 'b', args: ['b']}
+              { message: 'a', args: ['a'] },
+              { message: 'b', args: ['b'] }
             ]
             const actual = utilsModule.isValid(postParams)(['arraysArray', 'postParamsArray', 'stringsArray'])
             expect(actual).toBe(true)

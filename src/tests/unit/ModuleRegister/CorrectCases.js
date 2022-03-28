@@ -1,4 +1,4 @@
-/* global test, describe, expect */
+import { test, describe, expect } from '@jest/globals'
 
 const replacer = (key, value) => {
   if (value instanceof Function) return value.toString()

@@ -1,8 +1,8 @@
 /* global fixture, test, postMessageTests */
 import { ClientFunction, Selector } from 'testcafe'
 
-fixture(`<worker>.postMessage`)
-  .page(`./config/index.html`)
+fixture('<worker>.postMessage')
+  .page('./config/index.html')
 
 test('Without args when does not expect args', async t => {
   const testResult = await ClientFunction(() => postMessageTests.t1())()

@@ -1,334 +1,224 @@
-'use strict';
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
-  return typeof obj;
-} : function (obj) {
-  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+// src/utils.js
+var isValidObjectWith = (fields) => (obj) => !!obj && !Array.isArray(obj) && fields.every((field) => Object.getOwnPropertyNames(obj).includes(field));
+var isValidAction = (obj) => {
+  return isValidObjectWith(["message", "func"])(obj) && typeof obj.func === "function" && typeof obj.message === "string";
 };
-
-// Argument validation
-var isValidObjectWith = function isValidObjectWith(fields) {
-  return function (obj) {
-    return !!obj && !Array.isArray(obj) && fields.every(function (field) {
-      return obj.hasOwnProperty(field);
-    });
-  };
+var isValidActionsArray = (arr) => arr.every(isValidAction);
+var isValidPostParams = (obj) => {
+  return isValidObjectWith(["message", "args"])(obj) && Array.isArray(obj.args) && typeof obj.message === "string";
 };
-
-var isValidAction = function isValidAction(obj) {
-  return isValidObjectWith(['message', 'func'])(obj) && typeof obj.func === 'function' && typeof obj.message === 'string';
-};
-
-var isValidActionsArray = function isValidActionsArray(arr) {
-  return arr.every(isValidAction);
-};
-
-var isValidPostParams = function isValidPostParams(obj) {
-  return isValidObjectWith(['message', 'args'])(obj) && Array.isArray(obj.args) && typeof obj.message === 'string';
-};
-
-var isValidPostParamsArray = function isValidPostParamsArray(arr) {
-  return arr.every(isValidPostParams);
-};
-
-var isValidObjectsArray = function isValidObjectsArray(arr) {
-  return function () {
-    var fields = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-    return arr.every(isValidObjectWith(fields));
-  };
-};
-
+var isValidPostParamsArray = (arr) => arr.every(isValidPostParams);
+var isValidObjectsArray = (arr) => (fields = []) => arr.every(isValidObjectWith(fields));
 var testArray = {
-  'actionsArray': function actionsArray(arr) {
-    return isValidActionsArray(arr);
-  },
-  'arraysArray': function arraysArray(arr) {
-    return arr.every(function (item) {
-      return Array.isArray(item);
-    });
-  },
-  'objectsArray': function objectsArray(arr) {
-    return isValidObjectsArray(arr)();
-  },
-  'postParamsArray': function postParamsArray(arr) {
-    return isValidPostParamsArray(arr);
-  },
-  'stringsArray': function stringsArray(arr) {
-    return arr.every(function (item) {
-      return typeof item === 'string';
-    });
+  actionsArray: (arr) => isValidActionsArray(arr),
+  arraysArray: (arr) => arr.every((item) => Array.isArray(item)),
+  objectsArray: (arr) => isValidObjectsArray(arr)(),
+  postParamsArray: (arr) => isValidPostParamsArray(arr),
+  stringsArray: (arr) => arr.every((item) => typeof item === "string")
+};
+var isValidArg = (arg) => (type) => {
+  if (type === "null")
+    return arg === null;
+  if (type === "undefined")
+    return arg === void 0;
+  if (type === "action")
+    return isValidAction(arg);
+  if (Array.isArray(arg)) {
+    if (type !== "array" && !testArray[type])
+      return false;
+    if (type === "array")
+      return true;
+    return testArray[type](arg);
   }
+  if (arg)
+    return typeof arg === type.toString();
+  return false;
 };
-
-var isValidArg = function isValidArg(arg) {
-  return function (type) {
-    if (type === 'null') return arg === null;
-    if (type === 'undefined') return arg === undefined;
-    if (type === 'action') return isValidAction(arg);
-    if (Array.isArray(arg)) {
-      if (type !== 'array' && !testArray[type]) return false;
-      if (type === 'array') return true;
-      return testArray[type](arg);
-    }
-    if (arg) return (typeof arg === 'undefined' ? 'undefined' : _typeof(arg)) === type.toString(); // eslint-disable-line
-    return false;
-  };
+var isValid = (argument) => (types = null) => {
+  if (Array.isArray(types))
+    return types.some((type) => isValidArg(argument)(type));
+  if (isValidArg(argument)(types))
+    return true;
+  return false;
 };
-
-var isValid = function isValid(argument) {
-  return function () {
-    var types = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-
-    if (Array.isArray(types)) return types.some(function (type) {
-      return isValidArg(argument)(type);
-    });
-    if (isValidArg(argument)(types)) return true;
-    return false;
-  };
-};
-
-// Argument error builder
-var argumentError = function argumentError(_ref) {
-  var _ref$expected = _ref.expected,
-      expected = _ref$expected === undefined ? '' : _ref$expected,
-      received = _ref.received,
-      _ref$extraInfo = _ref.extraInfo,
-      extraInfo = _ref$extraInfo === undefined ? '' : _ref$extraInfo;
-
+var argumentError = ({ expected = "", received, extraInfo = "" }) => {
   try {
-    return new TypeError('' + ('You should provide ' + expected) + ('\n' + extraInfo) + ('\nReceived: ' + JSON.stringify(received)));
+    return new TypeError(`${"You should provide " + expected}${"\n" + extraInfo}${"\nReceived: " + JSON.stringify(received)}`);
   } catch (err) {
-    if (err.message === 'Converting circular structure to JSON') {
-      return new TypeError('' + ('You should provide ' + expected) + ('\n' + extraInfo) + ('\nReceived a circular structure: ' + received));
+    if (err.message.includes("Converting circular structure to JSON")) {
+      return new TypeError(`${"You should provide " + expected}${"\n" + extraInfo}${"\nReceived a circular structure: " + received}`);
     }
     throw err;
   }
 };
+var makeResponse = (work) => `
+  self.onmessage = function(event) {
+    const args = event.data.message.args
+    if (args) {
+      self.postMessage((${work}).apply(null, args))
+      return close()
+    }
+    self.postMessage((${work})())
+    return close()
+  }
+`;
 
-// Response builder
-var makeResponse = function makeResponse(work) {
-  return '\n  self.onmessage = event => {\n    const args = event.data.message.args\n    if (args) {\n      self.postMessage((' + work + ').apply(null, args))\n      return close()\n    }\n    self.postMessage((' + work + ')())\n    return close()\n  }\n';
-};
-
-var createDisposableWorker = function createDisposableWorker(response) {
-  var URL = window.URL || window.webkitURL;
-  var blob = new Blob([response], { type: 'application/javascript' }); // eslint-disable-line
-  var objectURL = URL.createObjectURL(blob);
-  var worker = new Worker(objectURL); // eslint-disable-line
-  worker.post = function (message) {
-    return new Promise(function (resolve, reject) {
-      worker.onmessage = function (event) {
-        URL.revokeObjectURL(objectURL);
-        resolve(event.data);
-      };
-      worker.onerror = function (e) {
-        console.error('Error: Line ' + e.lineno + ' in ' + e.filename + ': ' + e.message);
-        reject(e);
-      };
-      worker.postMessage({ message: message });
-    });
-  };
+// src/createDisposableWorker.js
+var createDisposableWorker = (response) => {
+  const URL = window.URL || window.webkitURL;
+  const blob = new Blob([response], { type: "application/javascript" });
+  const objectURL = URL.createObjectURL(blob);
+  const worker = new Worker(objectURL);
+  worker.post = (message) => new Promise((resolve, reject) => {
+    worker.onmessage = (event) => {
+      URL.revokeObjectURL(objectURL);
+      resolve(event.data);
+    };
+    worker.onerror = (e) => {
+      console.error(`Error: Line ${e.lineno} in ${e.filename}: ${e.message}`);
+      reject(e);
+    };
+    worker.postMessage({ message });
+  });
   return worker;
 };
 
-var run = function run() {
-  var work = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-  var args = arguments[1];
-
-  var validWork = isValid(work)('function');
-  var validArgs = isValid(args)(['array', 'undefined']);
+// src/run.js
+var run = (work = null, args) => {
+  const validWork = isValid(work)("function");
+  const validArgs = isValid(args)(["array", "undefined"]);
   if (validWork && validArgs) {
-    var worker = createDisposableWorker(makeResponse(work));
-    return worker.post({ args: args });
+    const worker = createDisposableWorker(makeResponse(work));
+    return worker.post({ args });
   }
-  if (!validWork) console.error(argumentError({ expected: 'a function', received: work }));
-  if (!validArgs) console.error(argumentError({ expected: 'an array', received: args }));
+  if (!validWork)
+    console.error(argumentError({ expected: "a function", received: work }));
+  if (!validArgs)
+    console.error(argumentError({ expected: "an array", received: args }));
   return null;
 };
 
-var warnWork = function warnWork(msg) {
-  console.warn('WARN! ' + msg + ' is not a registered action for this worker');
-  return msg + ' is not a registered action for this worker';
+// src/post.js
+var warnWork = (msg) => {
+  console.warn(`WARN! ${msg} is not a registered action for this worker`);
+  return `${msg} is not a registered action for this worker`;
+};
+var post = (actions) => (msg = null, args) => {
+  const validMessage = isValid(msg)("string");
+  const validArgs = isValid(args)(["array", "undefined"]);
+  if (validMessage && validArgs) {
+    const work = actions.filter(({ message }) => JSON.stringify(message) === JSON.stringify(msg)).map((action) => action.func).pop();
+    if (!work)
+      return run(warnWork, [JSON.stringify(msg)]);
+    if (args)
+      return run(work, args);
+    return run(work);
+  }
+  if (!validMessage)
+    console.error(argumentError({ expected: "a string", received: msg }));
+  if (!validArgs)
+    console.error(argumentError({ expected: "an array", received: args }));
+  return null;
 };
 
-var post = function post(actions) {
-  return function () {
-    var msg = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-    var args = arguments[1];
-
-    var validMessage = isValid(msg)('string');
-    var validArgs = isValid(args)(['array', 'undefined']);
-    if (validMessage && validArgs) {
-      var work = actions.filter(function (_ref) {
-        var message = _ref.message;
-        return JSON.stringify(message) === JSON.stringify(msg);
-      }).map(function (action) {
-        return action.func;
-      }).pop();
-
-      if (!work) return run(warnWork, [JSON.stringify(msg)]);
-      if (args) return run(work, args);
-      return run(work);
-    }
-
-    if (!validMessage) console.error(argumentError({ expected: 'a string', received: msg }));
-    if (!validArgs) console.error(argumentError({ expected: 'an array', received: args }));
-    return null;
-  };
-};
-
-// import { invalidObjectsArray, isArrayOf, notArray, returnNull, wrongLength, wrongObjects } from './utils'
-var makeOptionsFor = function makeOptionsFor(arr) {
+// src/postAll.js
+var makeOptionsFor = (arr) => {
   return {
-    expected: 'an array of arrays, an array of objects, or an array of strings',
+    expected: "an array of arrays, an array of objects, or an array of strings",
     received: arr,
-    extraInfo: 'If an array of arrays, ' + 'it must have the same length as the actions registered for this worker.\n' + 'If an array of objects, every object must containing two fields:\n* message\n* args'
+    extraInfo: "If an array of arrays, it must have the same length as the actions registered for this worker.\nIf an array of objects, every object must containing two fields:\n* message\n* args"
   };
 };
-function postAll() {
-  var _this = this;
-
-  var arr = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-
-  if (isValid(arr)(['arraysArray', 'postParamsArray', 'stringsArray'])) {
-    if (arr.length === 0) return Promise.all(this.actions.map(function (_ref) {
-      var message = _ref.message;
-      return _this.postMessage(message);
-    }));
-
-    if (arr.every(function (item) {
-      return typeof item === 'string';
-    })) {
-      return Promise.all(arr.map(function (msg) {
-        return _this.postMessage(msg);
-      }));
+function postAll(arr = []) {
+  if (isValid(arr)(["arraysArray", "postParamsArray", "stringsArray"])) {
+    if (arr.length === 0)
+      return Promise.all(this.actions.map(({ message }) => this.postMessage(message)));
+    if (arr.every((item) => typeof item === "string")) {
+      return Promise.all(arr.map((msg) => this.postMessage(msg)));
     }
-
-    if (arr.every(function (item) {
-      return (typeof item === 'undefined' ? 'undefined' : _typeof(item)) === 'object' && !Array.isArray(item);
-    })) {
-      return Promise.all(arr.map(function (_ref2) {
-        var message = _ref2.message,
-            args = _ref2.args;
-        return _this.postMessage(message, args);
-      }));
+    if (arr.every((item) => typeof item === "object" && !Array.isArray(item))) {
+      return Promise.all(arr.map(({ message, args }) => this.postMessage(message, args)));
     }
-
-    if (arr.every(function (item) {
-      return Array.isArray(item);
-    }) && arr.length === this.actions.length) {
-      return Promise.all(arr.map(function (args, index) {
-        return _this.postMessage(_this.actions[index].message, args);
-      }));
+    if (arr.every((item) => Array.isArray(item)) && arr.length === this.actions.length) {
+      return Promise.all(arr.map((args, index) => this.postMessage(this.actions[index].message, args)));
     }
   }
-
   console.error(argumentError(makeOptionsFor(arr)));
   return null;
 }
 
-var isActionOf = function isActionOf(actions) {
-  return function (newAction) {
-    return actions.some(function (action) {
-      return action.message === newAction.message;
-    });
-  };
+// src/register.js
+var isActionOf = (actions) => (newAction) => actions.some((action) => action.message === newAction.message);
+var warnMsg = (action) => `WARN! An action with message "${action.message}" is already registered for this worker`;
+var pushInto = (actions) => (action) => {
+  if (isActionOf(actions)(action)) {
+    console.warn(warnMsg(action));
+    return actions.length;
+  }
+  return actions.push(action);
 };
-
-var warnMsg = function warnMsg(action) {
-  return 'WARN! An action with message "' + action.message + '" is already registered for this worker';
-};
-
-var pushInto = function pushInto(actions) {
-  return function (action) {
-    if (isActionOf(actions)(action)) {
-      console.warn(warnMsg(action));
-      return actions.length;
-    }
-    return actions.push(action);
-  };
-};
-
-var makeOptionsFor$1 = function makeOptionsFor(action) {
+var makeOptionsFor2 = (action) => {
   return {
-    expected: 'an array of actions or an action',
+    expected: "an array of actions or an action",
     received: action,
-    extraInfo: 'Every action should be an object containing two fields:\n* message\n* func'
+    extraInfo: "Every action should be an object containing two fields:\n* message\n* func"
   };
 };
-
-var register = function register(actions) {
-  return function () {
-    var action = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-
-    if (isValid(action)(['action', 'actionsArray'])) {
-      if (Array.isArray(action)) {
-        return action.reduce(function (actions, action) {
-          pushInto(actions)(action);
-          return actions;
-        }, actions).length;
-      }
-
-      return pushInto(actions)(action);
+var register = (actions) => (action = null) => {
+  if (isValid(action)(["action", "actionsArray"])) {
+    if (Array.isArray(action)) {
+      return action.reduce((actions2, action2) => {
+        pushInto(actions2)(action2);
+        return actions2;
+      }, actions).length;
     }
-    console.error(argumentError(makeOptionsFor$1(action)));
-    return null;
-  };
+    return pushInto(actions)(action);
+  }
+  console.error(argumentError(makeOptionsFor2(action)));
+  return null;
 };
 
-var removeFrom = function removeFrom(actions) {
-  return function (msg) {
-    var index = actions.findIndex(function (_ref) {
-      var message = _ref.message;
-      return message === msg;
-    });
-    index === -1 ? console.warn('WARN! Impossible to unregister action with message "' + msg + '".\nIt is not a registered action for this worker.') : actions.splice(index, 1);
-    return actions;
-  };
+// src/unregister.js
+var removeFrom = (actions) => (msg) => {
+  const index = actions.findIndex(({ message }) => message === msg);
+  index === -1 ? console.warn(`WARN! Impossible to unregister action with message "${msg}".
+It is not a registered action for this worker.`) : actions.splice(index, 1);
+  return actions;
 };
-
-var makeOptions = function makeOptions(msg) {
+var makeOptions = (msg) => {
   return {
-    expected: 'an array of strings or a string',
+    expected: "an array of strings or a string",
     received: msg
   };
 };
-
-var unregister = function unregister(actions) {
-  return function () {
-    var msg = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-
-    if (isValid(msg)(['string', 'stringsArray'])) {
-      if (Array.isArray(msg)) {
-        return msg.reduce(function (actions, message) {
-          removeFrom(actions)(message);
-          return actions;
-        }, actions).length;
-      }
-      return removeFrom(actions)(msg).length;
+var unregister = (actions) => (msg = null) => {
+  if (isValid(msg)(["string", "stringsArray"])) {
+    if (Array.isArray(msg)) {
+      return msg.reduce((actions2, message) => {
+        removeFrom(actions2)(message);
+        return actions2;
+      }, actions).length;
     }
-
-    console.error(argumentError(makeOptions(msg)));
-    return null;
-  };
+    return removeFrom(actions)(msg).length;
+  }
+  console.error(argumentError(makeOptions(msg)));
+  return null;
 };
 
-var options = function options(actions) {
+// src/create.js
+var options = (actions) => {
   return {
-    expected: 'an array of objects',
+    expected: "an array of objects",
     received: actions,
-    extraInfo: 'Every action should be an object containing two fields:\n* message\n* func'
+    extraInfo: "Every action should be an object containing two fields:\n* message\n* func"
   };
 };
-
-var create = function create() {
-  var actions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-
-  if (isValid(actions)('actionsArray')) {
+var create = (actions = []) => {
+  if (isValid(actions)("actionsArray")) {
     return {
-      actions: actions,
+      actions,
       postMessage: post(actions),
-      postAll: postAll,
+      postAll,
       register: register(actions),
       unregister: unregister(actions)
     };
@@ -337,16 +227,17 @@ var create = function create() {
   return null;
 };
 
-var createWrapper = function createWrapper() {
+// src/index.js
+var createWrapper = () => {
   if (!window.Worker) {
-    console.error('This browser does not support Workers.');
+    console.error("This browser does not support Workers.");
     return null;
   }
   if (!(window.URL.createObjectURL || window.webkitURL.createObjectURL)) {
-    console.error('This browser does not have URL.createObjectURL method.');
+    console.error("This browser does not have URL.createObjectURL method.");
     return null;
   }
-  return { create: create, run: run };
+  return { create, run };
 };
-
 var WorkerWrapper = createWrapper();
+//# sourceMappingURL=sworker.js.map
