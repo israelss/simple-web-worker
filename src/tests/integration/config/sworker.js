@@ -6,6 +6,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
 };
 
+var CLOSE_WORKER = '__CLOSE_WORKER__';
 // Argument validation
 var isValidObjectWith = function isValidObjectWith(fields) {
   return function (obj) {
@@ -98,7 +99,7 @@ var argumentError = function argumentError(_ref) {
   try {
     return new TypeError('' + ('You should provide ' + expected) + ('\n' + extraInfo) + ('\nReceived: ' + JSON.stringify(received)));
   } catch (err) {
-    if (err.message === 'Converting circular structure to JSON') {
+    if (err.message.includes('Converting circular structure to JSON')) {
       return new TypeError('' + ('You should provide ' + expected) + ('\n' + extraInfo) + ('\nReceived a circular structure: ' + received));
     }
     throw err;
@@ -107,10 +108,20 @@ var argumentError = function argumentError(_ref) {
 
 // Response builder
 var makeResponse = function makeResponse(work) {
-  return '\n  self.onmessage = event => {\n    const args = event.data.message.args\n    if (args) {\n      self.postMessage((' + work + ').apply(null, args))\n      return close()\n    }\n    self.postMessage((' + work + ')())\n    return close()\n  }\n';
+  return '\n  self.onmessage = function(event) {\n    const args = event.data.message.args\n    if (args) {\n      self.postMessage((' + work + ').apply(null, args))\n      return close()\n    }\n    self.postMessage((' + work + ')())\n    return close()\n  }\n';
+};
+
+var makeManualCloseResponse = function makeManualCloseResponse(work) {
+  return '\nself.onmessage = async function(event) {\n  if(event.data.message === \'' + CLOSE_WORKER + '\'){\n    return close()\n  }\n\n  const args = event.data.message.args\n  \n  if (args) {\n    const msg = await (' + work + ').apply(null, args)\n    self.postMessage(msg)\n  }\n  const msg = await (' + work + ')()\n  self.postMessage(msg)\n}\n';
+};
+
+var isAsyncFunc = function isAsyncFunc(func) {
+  return Object.prototype.toString.call(func) === "[object AsyncFunction]";
 };
 
 var createDisposableWorker = function createDisposableWorker(response) {
+  var isAsyncFunc$$1 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
   var URL = window.URL || window.webkitURL;
   var blob = new Blob([response], { type: 'application/javascript' }); // eslint-disable-line
   var objectURL = URL.createObjectURL(blob);
@@ -119,7 +130,13 @@ var createDisposableWorker = function createDisposableWorker(response) {
     return new Promise(function (resolve, reject) {
       worker.onmessage = function (event) {
         URL.revokeObjectURL(objectURL);
-        resolve(event.data);
+        if (isAsyncFunc$$1) {
+          resolve({ data: event.data, close: function close() {
+              return worker.postMessage({ message: CLOSE_WORKER });
+            } });
+        } else {
+          resolve(event.data);
+        }
       };
       worker.onerror = function (e) {
         console.error('Error: Line ' + e.lineno + ' in ' + e.filename + ': ' + e.message);
@@ -138,7 +155,7 @@ var run = function run() {
   var validWork = isValid(work)('function');
   var validArgs = isValid(args)(['array', 'undefined']);
   if (validWork && validArgs) {
-    var worker = createDisposableWorker(makeResponse(work));
+    var worker = isAsyncFunc(work) ? createDisposableWorker(makeManualCloseResponse(work), true) : createDisposableWorker(makeResponse(work));
     return worker.post({ args: args });
   }
   if (!validWork) console.error(argumentError({ expected: 'a function', received: work }));

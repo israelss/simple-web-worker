@@ -23,7 +23,7 @@ const postAllTests = {
       }
     }
   ]),
-  t1 () {
+  t1() {
     return this.worker.postAll()
       .then(result => {
         resultEl.innerHTML = stringify(result)
@@ -31,7 +31,7 @@ const postAllTests = {
       })
       .catch(err => err)
   },
-  t2 () {
+  t2() {
     return this.worker.postAll(['a'])
       .then(result => {
         resultEl.innerHTML = stringify(result)
@@ -39,7 +39,7 @@ const postAllTests = {
       })
       .catch(err => err)
   },
-  t3 () {
+  t3() {
     return this.worker.postAll(['a', 'b'])
       .then(result => {
         resultEl.innerHTML = stringify(result)
@@ -47,7 +47,7 @@ const postAllTests = {
       })
       .catch(err => err)
   },
-  t4 () {
+  t4() {
     return this.worker.postAll([{ message: 'a', args: [] }])
       .then(result => {
         resultEl.innerHTML = stringify(result)
@@ -55,7 +55,7 @@ const postAllTests = {
       })
       .catch(err => err)
   },
-  t5 () {
+  t5() {
     return this.worker.postAll([
       { message: 'a', args: [] },
       { message: 'b', args: [] }
@@ -66,7 +66,7 @@ const postAllTests = {
       })
       .catch(err => err)
   },
-  t6 () {
+  t6() {
     return this.worker.postAll([[null], [null], [null], [null]])
       .then(result => {
         console.log(result)
@@ -75,7 +75,7 @@ const postAllTests = {
       })
       .catch(err => err)
   },
-  t7 () {
+  t7() {
     return this.worker.postAll([[], ['ignored', 'args'], ['something'], ['overwrited']])
       .then(result => {
         resultEl.innerHTML = stringify(result)
@@ -83,7 +83,7 @@ const postAllTests = {
       })
       .catch(err => err)
   },
-  t8 () {
+  t8() {
     return this.worker.postAll([[], ['ignored', 'args'], ['something'], []])
       .then(result => {
         resultEl.innerHTML = stringify(result)
@@ -94,14 +94,14 @@ const postAllTests = {
 }
 
 const unregisterTests = {
-  t1 () {
+  t1() {
     const worker = WorkerWrapper.create([{ message: 'a', func: () => 'a' }])
     const result = worker.unregister('a')
     resultEl.innerHTML = result
     return result
   },
 
-  t2 () {
+  t2() {
     const worker = WorkerWrapper.create([
       { message: 'a', func: () => 'a' },
       { message: 'b', func: () => 'b' }
@@ -111,14 +111,14 @@ const unregisterTests = {
     return result
   },
 
-  t3 () {
+  t3() {
     const worker = WorkerWrapper.create([])
     const result = worker.unregister('a')
     resultEl.innerHTML = result
     return result
   },
 
-  t4 () {
+  t4() {
     const worker = WorkerWrapper.create([
       { message: 'c', func: () => 'c' },
       { message: 'd', func: () => 'd' }
@@ -128,7 +128,7 @@ const unregisterTests = {
     return result
   },
 
-  t5 () {
+  t5() {
     const worker = WorkerWrapper.create([
       { message: 'a', func: () => 'a' },
       { message: 'b', func: () => 'b' },
@@ -141,14 +141,14 @@ const unregisterTests = {
 }
 
 const registerTests = {
-  t1 () {
+  t1() {
     const worker = WorkerWrapper.create([])
     const result = worker.register({ message: 'a', func: () => 'a' })
     resultEl.innerHTML = result
     return result
   },
 
-  t2 () {
+  t2() {
     const worker = WorkerWrapper.create([])
     const result = worker.register([
       { message: 'a', func: () => 'a' },
@@ -158,14 +158,14 @@ const registerTests = {
     return result
   },
 
-  t3 () {
+  t3() {
     const worker = WorkerWrapper.create([{ message: 'a', func: () => 'a' }])
     const result = worker.register({ message: 'a', func: () => 'a' })
     resultEl.innerHTML = result
     return result
   },
 
-  t4 () {
+  t4() {
     const worker = WorkerWrapper.create([
       { message: 'a', func: () => 'a' },
       { message: 'b', func: () => 'b' }
@@ -178,7 +178,7 @@ const registerTests = {
     return result
   },
 
-  t5 () {
+  t5() {
     const worker = WorkerWrapper.create([
       { message: 'a', func: () => 'a' },
       { message: 'b', func: () => 'b' }
@@ -194,8 +194,20 @@ const registerTests = {
 }
 
 const postMessageTests = {
-  t1 () {
-    const worker = WorkerWrapper.create([{message: 'a', func: () => 'a'}])
+  t1() {
+    const worker = WorkerWrapper.create([{
+      message: 'a', func: () => 'a'
+    }])
+    return worker.postMessage('a')
+      .then(result => {
+        resultEl.innerHTML = result;
+        return result
+      })
+      .catch(err => err)
+  },
+
+  t2() {
+    const worker = WorkerWrapper.create([{ message: 'a', func: (arg) => `${arg}` }])
     return worker.postMessage('a')
       .then(result => {
         resultEl.innerHTML = result
@@ -204,17 +216,7 @@ const postMessageTests = {
       .catch(err => err)
   },
 
-  t2 () {
-    const worker = WorkerWrapper.create([{message: 'a', func: (arg) => `${arg}`}])
-    return worker.postMessage('a')
-      .then(result => {
-        resultEl.innerHTML = result
-        return result
-      })
-      .catch(err => err)
-  },
-
-  t3 () {
+  t3() {
     const worker = WorkerWrapper.create([{
       message: 'a',
       func: function (arg) {
@@ -229,8 +231,8 @@ const postMessageTests = {
       .catch(err => err)
   },
 
-  t4 () {
-    const worker = WorkerWrapper.create([{message: 'a', func: () => 'a'}])
+  t4() {
+    const worker = WorkerWrapper.create([{ message: 'a', func: () => 'a' }])
     return worker.postMessage('a', ['Ignored', 'arguments'])
       .then(result => {
         resultEl.innerHTML = result
@@ -239,8 +241,8 @@ const postMessageTests = {
       .catch(err => err)
   },
 
-  t5 () {
-    const worker = WorkerWrapper.create([{message: 'a', func: (arg) => `${arg}`}])
+  t5() {
+    const worker = WorkerWrapper.create([{ message: 'a', func: (arg) => `${arg}` }])
     return worker.postMessage('a', ['a'])
       .then(result => {
         resultEl.innerHTML = result
@@ -249,7 +251,7 @@ const postMessageTests = {
       .catch(err => err)
   },
 
-  t6 () {
+  t6() {
     const worker = WorkerWrapper.create([{
       message: 'a',
       func: function (arg) {
@@ -264,8 +266,8 @@ const postMessageTests = {
       .catch(err => err)
   },
 
-  t7 () {
-    const worker = WorkerWrapper.create([{message: 'a', func: () => 'a'}])
+  t7() {
+    const worker = WorkerWrapper.create([{ message: 'a', func: () => 'a' }])
     return worker.postMessage('Darth Vader')
       .then(result => {
         resultEl.innerHTML = result
@@ -277,7 +279,7 @@ const postMessageTests = {
 
 const runTests = {
   // Run without args and without arrow function
-  t1 () {
+  t1() {
     return WorkerWrapper.run(function () { return 'Run without args and without arrow function' })
       .then(result => {
         resultEl.innerHTML = result
@@ -287,7 +289,7 @@ const runTests = {
   },
 
   // Run without args and with arrow function
-  t2 () {
+  t2() {
     return WorkerWrapper.run(() => 'Run without args and with arrow function')
       .then(result => {
         resultEl.innerHTML = result
@@ -297,7 +299,7 @@ const runTests = {
   },
 
   // Run with args and without arrow function
-  t3 () {
+  t3() {
     return WorkerWrapper.run(function (arg1, arg2) { return `Run ${arg1} and ${arg2}` }, ['with args', 'without arrow function'])
       .then(result => {
         resultEl.innerHTML = result
@@ -307,7 +309,7 @@ const runTests = {
   },
 
   // Run with args and with arrow function
-  t4 () {
+  t4() {
     return WorkerWrapper.run((arg1, arg2) => `Run ${arg1} and ${arg2}`, ['with args', 'with arrow function'])
       .then(result => {
         resultEl.innerHTML = result
@@ -317,7 +319,7 @@ const runTests = {
   },
 
   // Run without args but expecting them
-  t5 () {
+  t5() {
     return WorkerWrapper.run((arg1, arg2) => `Run ${arg1} and ${arg2}`)
       .then(result => {
         resultEl.innerHTML = result
@@ -327,7 +329,7 @@ const runTests = {
   },
 
   // Run without args but with default arg value
-  t6 () {
+  t6() {
     /** REASON FOR THAT UGLY FUNCTION (TIP: I CAN'T USE DEFAULT VALUES FOR ARGUMENTS IN THESE TESTS!):
       * I don't know why, but it is not possible to use default arguments in this test, like:
       *     (arg1 = 'default arg value') => `Run with ${arg1}`
@@ -368,11 +370,39 @@ const runTests = {
   },
 
   // Run without args but without default
-  t7 () {
+  t7() {
     return WorkerWrapper.run((arg1) => `Run with ${arg1}`, undefined)
       .then(result => {
-        resultEl.innerHTML = result
+        resultEl.innerHTML = result.data
         return result
+      })
+      .catch(err => err)
+  }
+}
+
+
+const asyncPostMessageTests = {
+  t1() {
+    const worker = WorkerWrapper.create([{
+      message: 'a', func: async (args) => {
+        setInterval(() => {
+          console.log('hello async func');
+        }, 1000);
+        const p = new Promise((resolve) => {
+          setTimeout(() => {
+            resolve(args)
+          }, 3000);
+        });
+        return await p;
+      }
+    }])
+    return worker.postMessage('a', ['async func'])
+      .then(result => {
+        resultEl.innerHTML = result.data;
+        setTimeout(() => {
+          console.log('work1 closed');
+          result.close()
+        }, 5000);
       })
       .catch(err => err)
   }
