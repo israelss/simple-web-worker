@@ -1,4 +1,8 @@
 node_modules
 **/*yarn*
 .vscode
+
+# Auto generated files and folders
 coverage
+src/tests/integration/config/sworker.js
+src/tests/integration/config/sworker.js.map
