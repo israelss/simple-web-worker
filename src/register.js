@@ -1,25 +1,15 @@
-import { argumentError, isValid } from './utils'
+import { argumentError } from './helpers/builders'
+import { isValid } from './helpers/validators'
 
 const isActionOf = actions => newAction =>
   actions.some(action => action.message === newAction.message)
 
-const warnMsg = action =>
-  `WARN! An action with message "${action.message}" is already registered for this worker`
-
 const pushInto = actions => action => {
   if (isActionOf(actions)(action)) {
-    console.warn(warnMsg(action))
+    console.warn(`WARN! An action with message "${action.message}" is already registered for this worker`)
     return actions.length
   }
   return actions.push(action)
-}
-
-const makeOptionsFor = action => {
-  return {
-    expected: 'an array of actions or an action',
-    received: action,
-    extraInfo: 'Every action should be an object containing two fields:\n* message\n* func'
-  }
 }
 
 export const register = actions => (action = null) => {
@@ -33,6 +23,10 @@ export const register = actions => (action = null) => {
 
     return pushInto(actions)(action)
   }
-  console.error((argumentError(makeOptionsFor(action))))
+  console.error(argumentError({
+    expected: 'an array of actions or an action',
+    received: action,
+    extraInfo: 'Every action should be an object containing two fields:\n* message\n* func'
+  }))
   return null
 }

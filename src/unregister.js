@@ -1,18 +1,13 @@
-import { argumentError, isValid } from './utils'
+import { argumentError } from './helpers/builders'
+import { isValid } from './helpers/validators'
 
 const removeFrom = actions => msg => {
   const index = actions.findIndex(({ message }) => message === msg)
   index === -1
-    ? console.warn(`WARN! Impossible to unregister action with message "${msg}".\nIt is not a registered action for this worker.`)
+    ? console.warn(`WARN! Impossible to unregister action with message "${msg}".
+It was not found as a registered action for this worker.`)
     : actions.splice(index, 1)
   return actions
-}
-
-const makeOptions = msg => {
-  return {
-    expected: 'an array of strings or a string',
-    received: msg
-  }
 }
 
 export const unregister = actions => (msg = null) => {
@@ -26,6 +21,9 @@ export const unregister = actions => (msg = null) => {
     return removeFrom(actions)(msg).length
   }
 
-  console.error(argumentError(makeOptions(msg)))
+  console.error(argumentError({
+    expected: 'an array of strings or a string',
+    received: msg
+  }))
   return null
 }

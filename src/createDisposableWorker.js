@@ -1,4 +1,4 @@
-import { CLOSE_WORKER } from './utils';
+import { CLOSE_WORKER } from './helpers/messages'
 
 export const createDisposableWorker = (response, isAsyncFunc = false) => {
   const URL = window.URL || window.webkitURL
@@ -10,9 +10,12 @@ export const createDisposableWorker = (response, isAsyncFunc = false) => {
       worker.onmessage = event => {
         URL.revokeObjectURL(objectURL)
         if (isAsyncFunc) {
-          resolve({ data: event.data, close: () => worker.postMessage({ message: CLOSE_WORKER }) })
+          resolve({
+            data: event.data,
+            close: () => worker.postMessage({ message: CLOSE_WORKER })
+          })
         } else {
-          resolve(event.data)
+          resolve({ data: event.data })
         }
       }
       worker.onerror = e => {

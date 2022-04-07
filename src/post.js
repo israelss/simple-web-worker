@@ -1,12 +1,14 @@
-import { argumentError, isValid } from './utils'
+import { argumentError } from './helpers/builders'
+import { isValid } from './helpers/validators'
 import { run } from './run'
 
 const warnWork = msg => {
-  console.warn(`WARN! ${msg} is not a registered action for this worker`)
-  return `${msg} is not a registered action for this worker`
+  const message = `${msg} is not a registered action for this worker`
+  console.warn(`WARN! ${message}`)
+  return message
 }
 
-export const post = actions => (msg = null, args) => {
+export const post = (actions, isAsyncFunc) => (msg = null, args) => {
   const validMessage = isValid(msg)('string')
   const validArgs = isValid(args)(['array', 'undefined'])
   if (validMessage && validArgs) {
@@ -16,8 +18,8 @@ export const post = actions => (msg = null, args) => {
       .pop()
 
     if (!work) return run(warnWork, [JSON.stringify(msg)])
-    if (args) return run(work, args)
-    return run(work)
+    if (args) return run(work, args, isAsyncFunc)
+    return run(work, undefined, isAsyncFunc)
   }
 
   if (!validMessage) console.error(argumentError({ expected: 'a string', received: msg }))
