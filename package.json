@@ -36,12 +36,21 @@
     "testcafe": "^1.18.4"
   },
   "jest": {
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "src/*.js",
+      "src/helpers/*.js"
+    ],
+    "coveragePathIgnorePatterns": [
+      "src/createDisposableWorker.js",
+      "src/index.js"
+    ],
+    "coverageProvider": "v8",
+    "injectGlobals": false,
     "testMatch": [
       "**/tests/unit/**/*.test.js"
     ],
-    "collectCoverageFrom": [
-      "src/*.js"
-    ]
+    "verbose": true
   },
   "standard": {
     "ignore": [
