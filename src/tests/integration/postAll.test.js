@@ -1,13 +1,6 @@
 /* global fixture, test, postAllTests */
 import { ClientFunction, Selector } from 'testcafe'
-
-const JSONreplacer = (key, value) => {
-  if (value instanceof Function) return value.toString()
-  if (value === undefined) return 'undefined'
-  return value
-}
-
-const stringify = (msg, replacer = JSONreplacer) => JSON.stringify(msg, replacer)
+import { stringify } from '../utils'
 
 fixture('<worker>.postAll')
   .page('./config/index.html')

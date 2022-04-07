@@ -1,11 +1,5 @@
 import { test, describe, expect } from '@jest/globals'
-
-const JSONreplacer = (key, value) => {
-  if (value instanceof Function) return value.toString()
-  return value
-}
-
-const stringify = (msg, replacer = JSONreplacer) => JSON.stringify(msg, replacer)
+import { stringify } from '../../utils'
 
 export default (unregister) => {
   describe('unregister - Correct use cases\n  Unregister:', () => {
