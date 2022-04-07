@@ -3,6 +3,7 @@
   "version": "1.3.0",
   "description": "An utility to simplify the use of web workers.",
   "main": "dist/sww.min.js",
+  "type": "module",
   "scripts": {
     "build": "yarn lint-fix && yarn test && yarn integration && NODE_ENV=production node esbuild.config.js",
     "dev": "node esbuild.config.dev.js",
