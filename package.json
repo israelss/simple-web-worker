@@ -55,7 +55,7 @@
   "standard": {
     "ignore": [
       "/src/tests/integration/config/sworker.js",
-      "/src/tests/integration/config/tests.js"
+      "/src/tests/integration/config/*ests.js"
     ]
   }
 }
