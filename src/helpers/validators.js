@@ -1,4 +1,3 @@
-const CLOSE_WORKER = '__CLOSE_WORKER__';
 // Argument validation
 const isValidObjectWith = fields => obj =>
   !!obj && !Array.isArray(obj) && fields.every(field => Object.getOwnPropertyNames(obj).includes(field))
@@ -47,55 +46,6 @@ const isValid = argument => (types = null) => {
   return false
 }
 
-// Argument error builder
-const argumentError = ({ expected = '', received, extraInfo = '' }) => {
-  try {
-    return new TypeError(`${'You should provide ' + expected}${'\n' + extraInfo}${'\nReceived: ' + JSON.stringify(received)}`)
-  } catch (err) {
-    if (err.message.includes('Converting circular structure to JSON')) {
-      return new TypeError(`${'You should provide ' + expected}${'\n' + extraInfo}${'\nReceived a circular structure: ' + received}`)
-    }
-    throw err
-  }
-}
-
-// Response builder
-const makeResponse = work => `
-  self.onmessage = function(event) {
-    const args = event.data.message.args
-    if (args) {
-      self.postMessage((${work}).apply(null, args))
-      return close()
-    }
-    self.postMessage((${work})())
-    return close()
-  }
-`
-
-const makeManualCloseResponse = work => `
-self.onmessage = async function(event) {
-  if(event.data.message === '${CLOSE_WORKER}'){
-    return close()
-  }
-
-  const args = event.data.message.args
-  
-  if (args) {
-    const msg = await (${work}).apply(null, args)
-    self.postMessage(msg)
-  }
-  const msg = await (${work})()
-  self.postMessage(msg)
-}
-`
-
-const isAsyncFunc = (func) => Object.prototype.toString.call(func) === "[object AsyncFunction]"
-
 export {
-  makeResponse,
-  isAsyncFunc,
-  makeManualCloseResponse,
-  argumentError,
-  isValid,
-  CLOSE_WORKER
+  isValid
 }
