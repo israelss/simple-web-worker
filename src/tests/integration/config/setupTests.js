@@ -1,0 +1,1 @@
+const resultEl = document.querySelector('#result')
