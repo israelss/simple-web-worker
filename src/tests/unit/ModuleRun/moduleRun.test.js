@@ -2,10 +2,10 @@ import { jest, afterEach, beforeEach, afterAll } from '@jest/globals'
 import CorrectCases from './CorrectCases'
 import WrongCases from './WrongCases'
 import { run } from '../../../run'
-import * as utils from '../../../utils'
 import * as externalModule from '../../../createDisposableWorker'
+import * as builders from '../../../helpers/builders'
 
-jest.spyOn(utils, 'makeResponse').mockImplementation(work => work)
+jest.spyOn(builders, 'makeResponse').mockImplementation(work => work)
 jest.mock('../../../createDisposableWorker')
 
 afterEach(() => {
