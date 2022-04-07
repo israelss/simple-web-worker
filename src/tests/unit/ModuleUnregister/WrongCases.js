@@ -3,7 +3,7 @@ import { jest, test, describe, expect } from '@jest/globals'
 export default (unregister) => {
   describe('unregister - Wrong use cases\n  Unregister:', () => {
     describe('Logs a warn message when called', () => {
-      const warn = message => `WARN! Impossible to unregister action with message "${message}".\nIt is not a registered action for this worker.`
+      const warn = message => `WARN! Impossible to unregister action with message "${message}".\nIt was not found as a registered action for this worker.`
 
       test('with more than one action, being only one registered', () => {
         const spy = console.warn = jest.fn()
