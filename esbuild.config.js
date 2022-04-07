@@ -1,9 +1,15 @@
-require('esbuild')
+import esbuild from 'esbuild'
+import babel from 'esbuild-plugin-babel'
+
+esbuild
   .build({
     bundle: true,
     entryPoints: ['src/index.js'],
+    minify: true,
+    target: ['es5'],
     outfile: 'dist/sww.min.js',
-    sourcemap: true
+    plugins: [babel()]
+
   })
   .then((result) => {
     if (result.warnings) {
