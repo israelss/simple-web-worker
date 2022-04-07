@@ -1,13 +1,23 @@
 {
   "env": {
     "test": {
-      "presets": ["@babel/preset-env"]
+      "presets": [
+        [
+          "@babel/preset-env",
+          {
+            "targets": "node 10.0"
+          }
+        ]
+      ]
     },
     "production": {
       "presets": [
-        ["@babel/preset-env", {
-          "modules": false
-        }]
+        [
+          "@babel/preset-env",
+          {
+            "modules": false
+          }
+        ]
       ]
     }
   }
