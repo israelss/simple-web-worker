@@ -30,7 +30,10 @@
   "devDependencies": {
     "@babel/core": "^7.17.8",
     "@babel/preset-env": "^7.16.11",
+    "core-js": "3.21.1",
+    "es-check": "^6.2.1",
     "esbuild": "^0.14.28",
+    "esbuild-plugin-babel": "^0.2.3",
     "jest": "^27.5.1",
     "standard": "^16.0.4",
     "testcafe": "^1.18.4"
