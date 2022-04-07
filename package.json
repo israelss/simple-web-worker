@@ -5,13 +5,16 @@
   "main": "dist/sww.min.js",
   "type": "module",
   "scripts": {
-    "build": "yarn lint-fix && yarn test && yarn integration && NODE_ENV=production node esbuild.config.js",
-    "dev": "node esbuild.config.dev.js",
-    "integration": "testcafe firefox src/tests/integration/*.test.js",
+    "prebuild": "yarn lint-fix && yarn test && yarn integration",
+    "build": "NODE_ENV=production node esbuild.config.js",
+    "postbuild": "yarn check-es-version",
+    "preintegration": "NODE_ENV=production node src/tests/integration/config/esbuild.config.sworker.js",
+    "integration": "testcafe 'firefox:headless' src/tests/integration/*.test.js",
     "lint": "standard",
     "lint-fix": "standard --fix",
-    "preintegration": "NODE_ENV=production node src/tests/integration/config/esbuild.config.sworker.js",
-    "test": "jest"
+    "dev": "node esbuild.config.dev.js",
+    "test": "jest",
+    "check-es-version": "yarn es-check es5 'dist/*.js'"
   },
   "repository": {
     "type": "git",
