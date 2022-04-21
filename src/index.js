@@ -2,6 +2,9 @@ import { create } from './create'
 import { run } from './run'
 
 const createWrapper = () => {
+  if ('undefined' === typeof window) {
+    return null;
+  }
   if (!window.Worker) {
     console.error('This browser does not support Workers.')
     return null
