@@ -107,7 +107,7 @@ var argumentError = function argumentError(_ref) {
 
 // Response builder
 var makeResponse = function makeResponse(work) {
-  return '\n  self.onmessage = event => {\n    const args = event.data.message.args\n    if (args) {\n      self.postMessage((' + work + ').apply(null, args))\n      return close()\n    }\n    self.postMessage((' + work + ')())\n    return close()\n  }\n';
+  return '\n  self.onmessage = function(event) {\n    const args = event.data.message.args\n    if (args) {\n      self.postMessage((' + work + ').apply(null, args))\n      return close()\n    }\n    self.postMessage((' + work + ')())\n    return close()\n  }\n';
 };
 
 var createDisposableWorker = function createDisposableWorker(response) {
@@ -122,10 +122,12 @@ var createDisposableWorker = function createDisposableWorker(response) {
         resolve(event.data);
       };
       worker.onerror = function (e) {
-        console.error('Error: Line ' + e.lineno + ' in ' + e.filename + ': ' + e.message);
+        console.error("Error: Line " + e.lineno + " in " + e.filename + ": " + e.message);
         reject(e);
       };
-      worker.postMessage({ message: message });
+      postMessage = JSON.parse(JSON.stringify(message));
+      console.log("🚀 ~ file: createDisposableWorker.js:17 ~ newPromise ~ postMessage:", postMessage);
+      worker.postMessage(postMessage);
     });
   };
   return worker;
