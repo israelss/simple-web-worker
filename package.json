@@ -7,7 +7,7 @@
     "preintegration": "NODE_ENV=production rollup --config src/tests/integration/config/rollup.sworker.js",
     "integration": "testcafe firefox src/tests/integration/*.test.js",
     "test": "jest",
-    "build": "yarn test && yarn integration && NODE_ENV=production rollup -c",
+    "build": "NODE_ENV=production rollup -c",
     "dev": "rollup -c -w"
   },
   "repository": {

@@ -13,7 +13,9 @@ export const createDisposableWorker = response => {
         console.error(`Error: Line ${e.lineno} in ${e.filename}: ${e.message}`)
         reject(e)
       }
-      worker.postMessage({ message })
+      postMessage = JSON.parse(JSON.stringify(message));
+      console.log("🚀 ~ file: createDisposableWorker.js:17 ~ newPromise ~ postMessage:", postMessage)
+      worker.postMessage( postMessage )
     })
   return worker
 }
