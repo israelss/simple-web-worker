@@ -14,7 +14,6 @@ export const createDisposableWorker = response => {
         reject(e)
       }
       postMessage = JSON.parse(JSON.stringify(message));
-      console.log("🚀 ~ file: createDisposableWorker.js:17 ~ newPromise ~ postMessage:", message)
       worker.postMessage( {message:postMessage} )
     })
   return worker
