@@ -13,7 +13,7 @@ export const createDisposableWorker = response => {
         console.error(`Error: Line ${e.lineno} in ${e.filename}: ${e.message}`)
         reject(e)
       }
-      postMessage = JSON.parse(JSON.stringify(message));
+      const postMessage = JSON.parse(JSON.stringify(message));
       worker.postMessage( {message:postMessage} )
     })
   return worker
