@@ -13,8 +13,8 @@ export const createDisposableWorker = response => {
         console.error(`Error: Line ${e.lineno} in ${e.filename}: ${e.message}`)
         reject(e)
       }
-      const postMessage = JSON.parse(JSON.stringify(message));
-      worker.postMessage( {message:postMessage} )
+      const postMessageCloned = JSON.parse(JSON.stringify(message));
+      worker.postMessage( {message:postMessageCloned} )
     })
   return worker
 }
