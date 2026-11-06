@@ -1,6 +1,9 @@
 # SimpleWebWorker
 > An utility to simplify the use of web workers
 
+---
+## ⚠️ This project is no longer maintained. For new projects, please consider current alternatives such as [Comlink](https://github.com/googlechromelabs/comlink)
+
 ## Changelog
 
 ### **1.2.0**
